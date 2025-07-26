@@ -20,6 +20,8 @@ using std::chrono::high_resolution_clock;
 using std::chrono::duration_cast;
 using std::chrono::microseconds;
 using std::chrono::milliseconds;
+using std::min;
+using std::random_shuffle;
 
 random_device Matrix::rd;
 mersenne_twister Matrix::gen(Matrix::rd());
@@ -184,7 +186,7 @@ void Matrix::assurePathConnectivity(unsigned int exit_x) {
 		// Randomly convert some walls in the second-to-last row to passages to make it look less "wally"
 		for (unsigned int x = 1; x < width - 1; ++x) {
 			if (getFieldType(x, height - 2) == FieldType::WALL) {
-				if (getRandomNumber(1, 4) == 1) {
+				if (getRandomNumber(1, 3) == 1) {
 					delete fields[x][height - 2];
 					fields[x][height - 2] = new Passage();
 				}
@@ -239,6 +241,49 @@ void Matrix::assurePathConnectivity(unsigned int exit_x) {
 	}
 }
 
+MatrixField* Matrix::createRandomItem() const {
+	unsigned int itemChoice = getRandomNumber(1, 4);
+
+	switch (itemChoice) {
+	case 1: return new Sword();
+	case 2: return new Shield();
+	case 3: return new Hammer();
+	case 4: return new FogOfWar();
+	default: return new Sword();
+	}
+}
+
+void Matrix::placeItems(unsigned int no_of_items, unsigned int robot_x, unsigned int robot_y) {
+	vector<pair<unsigned int, unsigned int>> availablePositions;
+
+	for (unsigned int x = 1; x < width - 1; ++x) {
+		for (unsigned int y = 1; y < height - 1; ++y) {
+			if (x == robot_x && y == robot_y) continue;
+
+			if (getFieldType(x, y) == FieldType::PASSAGE) {
+				availablePositions.push_back(make_pair(x, y));
+			}
+		}
+	}
+
+	if (availablePositions.empty()) {
+		cout << "Warning: No available positions for items!\n";
+		return;
+	}
+
+	unsigned int itemsToPlace = min(no_of_items, static_cast<unsigned int>(availablePositions.size()));
+
+	random_shuffle(availablePositions.begin(), availablePositions.end());
+
+	for (unsigned int i = 0; i < itemsToPlace; ++i) {
+		unsigned int x = availablePositions[i].first;
+		unsigned int y = availablePositions[i].second;
+
+		delete fields[x][y];
+		fields[x][y] = createRandomItem();
+	}
+}
+
 void Matrix::generateMatrix(unsigned int no_of_items) {
 	auto start_time = high_resolution_clock::now();
 
@@ -248,12 +293,14 @@ void Matrix::generateMatrix(unsigned int no_of_items) {
 
 	assurePathConnectivity(entrance_and_exit.second);
 
+	placeItems(no_of_items, entrance_and_exit.first, 1);
+
 	auto end_time = high_resolution_clock::now();
 
 	auto duration_microseconds = duration_cast<microseconds>(end_time - start_time);
 	auto duration_milliseconds = duration_cast<milliseconds>(end_time - start_time);
 
-	cout << "Quick Trivia: It is claimed that it took Daedalus only " << duration_milliseconds.count() << " ms ("
+	cout << "Quick Trivia: Legend says that it took Daedalus only " << duration_milliseconds.count() << " ms ("
 		<< duration_microseconds.count() << " microseconds) to build the labyrinth (apparently Zeus helped him)\n\n";
 }
 

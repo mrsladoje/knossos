@@ -16,9 +16,11 @@ private:
 	MatrixField*** fields;
 
 	pair<unsigned int, unsigned int> setEntranceAndExit();
+	bool isBoundaryOrOutside(unsigned int x, unsigned int y) const;
 	void generativePrim(unsigned int entrance_x);
 	void assurePathConnectivity(unsigned int exit_x);
-	bool isBoundaryOrOutside(unsigned int x, unsigned int y) const;
+	void placeItems(unsigned int no_of_items, unsigned int robot_x, unsigned int robot_y);
+	MatrixField* createRandomItem() const;
 
 	static random_device rd;
 	static mersenne_twister gen;

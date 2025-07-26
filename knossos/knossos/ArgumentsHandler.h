@@ -1,0 +1,9 @@
+#pragma once
+
+#include <string>
+
+using std::string;
+
+bool parseArguments(int argc, char* argv[], unsigned int& width, unsigned int& height, unsigned int& items);
+
+void printManual(const string& programName);

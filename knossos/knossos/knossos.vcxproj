@@ -127,10 +127,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ArgumentsHandler.cpp" />
     <ClCompile Include="knossos.cpp" />
     <ClCompile Include="Matrix.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ArgumentsHandler.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="MatrixField.h" />
   </ItemGroup>
