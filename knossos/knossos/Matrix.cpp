@@ -34,16 +34,16 @@ unsigned int Matrix::getRandomNumber(unsigned int min, unsigned int max) {
 }
 
 Matrix::Matrix(unsigned int w, unsigned int h)
-    : width(w), height(h), fields(nullptr) {
+	: width(w), height(h), fields(nullptr) {
 
-    fields = new MatrixField**[width];
+	fields = new MatrixField * *[width];
 
-    for (unsigned int i = 0; i < width; ++i) {
-        fields[i] = new MatrixField*[height]; 
-        for (unsigned int j = 0; j < height; ++j) {
-            fields[i][j] = new Wall();  
-        }
-    }
+	for (unsigned int i = 0; i < width; ++i) {
+		fields[i] = new MatrixField * [height];
+		for (unsigned int j = 0; j < height; ++j) {
+			fields[i][j] = new Wall();
+		}
+	}
 }
 
 Matrix::~Matrix() {
@@ -68,7 +68,7 @@ FieldType Matrix::getFieldType(unsigned int x, unsigned int y) const {
 		return fields[x][y]->getFieldType();
 	}
 	else {
-		return FieldType::WALL;  
+		return FieldType::WALL;
 	}
 }
 
@@ -110,7 +110,7 @@ void Matrix::generativePrim(unsigned int entrance_x) {
 		frontiers.push_back(make_pair(entrance_x - 2, 1));
 		visited.insert(make_pair(entrance_x - 2, 1));
 	}
-	
+
 	while (!frontiers.empty())
 	{
 		unsigned int chosenOne = getRandomNumber(0, (unsigned int)frontiers.size() - 1);
@@ -139,7 +139,7 @@ void Matrix::generativePrim(unsigned int entrance_x) {
 		}
 
 		pair<unsigned int, unsigned int> chosenPoint = potentialMazeReconnectionPoints[getRandomNumber(0, (unsigned int)potentialMazeReconnectionPoints.size() - 1)];
-		
+
 		delete fields[(current.first + chosenPoint.first) / 2][(current.second + chosenPoint.second) / 2];
 		fields[(current.first + chosenPoint.first) / 2][(current.second + chosenPoint.second) / 2] = new Passage();
 
@@ -323,7 +323,7 @@ void Matrix::generateMatrix(unsigned int no_of_items) {
 	auto duration_microseconds = duration_cast<microseconds>(end_time - start_time);
 	auto duration_milliseconds = duration_cast<milliseconds>(end_time - start_time);
 
-	cout << "- Quick Trivia: Legend says that it took Daedalus only " << duration_milliseconds.count() << " ms ("
+	cout << "\x1B[38;2;0;0;155;47m" << " - Quick Trivia: " << "\x1B[0m" << " Legend says that it took Daedalus only " << duration_milliseconds.count() << " ms ("
 		<< duration_microseconds.count() << " microseconds) to build the labyrinth (apparently Zeus helped him)\n\n";
 }
 
@@ -332,14 +332,22 @@ void Matrix::printMatrix(unsigned int robot_x, unsigned int robot_y, unsigned in
 		cout << "  ";
 		for (unsigned int j = 0; j < width; ++j) {
 			if (robot_x == j && robot_y == i)
-				cout << 'R'; 
+				cout << "\x1B[5;34m" << 'R' << "\x1B[0m";
 			else if (minotaur_x == j && minotaur_y == i)
-				cout << 'M';  
-			else
-				cout << fields[j][i]->getSymbol();
+				cout << "\x1B[5;38;2;150;75;0m" << 'M' << "\x1B[0m";
+			else {
+				if (fields[j][i]->getFieldType() == FieldType::WALL)
+					cout << "\x1B[47m" << fields[j][i]->getSymbol() << "\x1B[0m";
+				else if (fields[j][i]->getFieldType() == FieldType::ITEM)
+					cout << "\x1B[31m" << fields[j][i]->getSymbol() << "\x1B[0m";
+				else if (fields[j][i]->getFieldType() == FieldType::ENTRANCE || fields[j][i]->getFieldType() == FieldType::EXIT)
+					cout << "\x1B[33m" << fields[j][i]->getSymbol() << "\x1B[0m";
+				else cout << fields[j][i]->getSymbol();
+			}
 		}
 		cout << "\n";
 	}
+	cout << "\n";
 }
 unsigned int Matrix::getEntranceX() const {
 	for (unsigned int x = 0; x < width; ++x) {

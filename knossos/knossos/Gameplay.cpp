@@ -7,8 +7,15 @@ using std::cout;
 using std::pair;
 
 void Gameplay::initializeGame(unsigned int no_of_items) {
-	cout << "\n============= Welcome to the Labyrinth of Knossos, Theseus! =============\n\n\n";
-	
+
+	cout << "\n";
+	cout << "\x1B[38;2;0;0;155;47m";
+	cout << "                                                                           \n";
+	cout << " ============= Welcome to the Labyrinth of Knossos, Theseus! ============= \n";
+	cout << "                                                                           \n";
+	cout << "\x1B[0m";
+	cout << "\n\n\n";
+
 	matrix = new Matrix(width, height);
 	matrix->generateMatrix(no_of_items);
 	
@@ -19,14 +26,14 @@ void Gameplay::initializeGame(unsigned int no_of_items) {
 	minotaur_x = minotaurPosition.first;
 	minotaur_y = minotaurPosition.second;
 
-	cout << "\n- A swift message from Hermes, messenger of the gods:\n";
+	cout << "\x1B[38;2;0;0;155;47m" << "\n - A swift message from Hermes, messenger of the gods: \n" << "\x1B[0m";
 	cout << "\n   \"Brave traveler, I guide all who wander through unknown paths.\n";
 	cout << "    Use WASD to move your mechanical companion through this labyrinth -\n";
 	cout << "    W for north, A for west, S for south, D for east.\n\n";
 	cout << "    Move wisely, for speed and cunning shall serve you well here.\n";
 	cout << "    May the gods favor your journey!\"\n\n";
 
-	cout << "\n- Hephaestus, god of forge, warns:\n";
+	cout << "\x1B[38;2;0;0;155;47m" << "\n - Hephaestus, god of forge, warns: \n" << "\x1B[0m";
 	cout << "\n   \"Beware, mortal! I have scattered my crafted relics throughout this maze.\n";
 	cout << "    Each 'P' holds a mystery - you won't know what I've forged until you step upon it!\n\n";
 	cout << "    My divine creations include:\n";
