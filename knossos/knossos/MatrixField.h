@@ -34,7 +34,7 @@ public:
 	virtual char getSymbol() const = 0;
 	virtual bool isWalkable() const = 0;
 
-	virtual void onEnter() = 0;
+	virtual void onEnter() {};
 };
 
 class Passage : public MatrixField {
@@ -113,8 +113,8 @@ class Item : public MatrixField {
 protected:
 	ItemType itemType;
 public:
-	Item(ItemType type, char sym, bool walkable)
-		: MatrixField(FieldType::ITEM, sym, walkable), itemType(type) {}
+	Item(ItemType type, bool walkable)
+		: MatrixField(FieldType::ITEM, 'P', walkable), itemType(type) {}
 
 	virtual ~Item() = default;
 
@@ -123,22 +123,22 @@ public:
 	FieldType getFieldType() const override {
 		return FieldType::ITEM;
 	}
-};
-
-class Sword : public Item {
-public:
-	Sword() : Item(ItemType::SWORD, 'M', true) {}
-
-	ItemType getItemType() const override {
-		return ItemType::SWORD;
-	}
 
 	char getSymbol() const override {
-		return 'M';
+		return 'P';
 	}
 
 	bool isWalkable() const override {
 		return true;
+	}
+};
+
+class Sword : public Item {
+public:
+	Sword() : Item(ItemType::SWORD, true) {}
+
+	ItemType getItemType() const override {
+		return ItemType::SWORD;
 	}
 
 	void onEnter() override {
@@ -148,18 +148,10 @@ public:
 
 class Shield : public Item {
 public:
-	Shield() : Item(ItemType::SHIELD, 'S', true) {}
+	Shield() : Item(ItemType::SHIELD, true) {}
 
 	ItemType getItemType() const override {
 		return ItemType::SHIELD;
-	}
-
-	char getSymbol() const override {
-		return 'S';
-	}
-
-	bool isWalkable() const override {
-		return true;
 	}
 
 	void onEnter() override {
@@ -169,18 +161,10 @@ public:
 
 class Hammer : public Item {
 public:
-	Hammer() : Item(ItemType::HAMMER, 'C', true) {}
+	Hammer() : Item(ItemType::HAMMER, true) {}
 
 	ItemType getItemType() const override {
 		return ItemType::HAMMER;
-	}
-
-	char getSymbol() const override {
-		return 'C';
-	}
-
-	bool isWalkable() const override {
-		return true;
 	}
 
 	void onEnter() override {
@@ -190,18 +174,10 @@ public:
 
 class FogOfWar : public Item {
 public:
-	FogOfWar() : Item(ItemType::FOG_OF_WAR, 'F', true) {}
+	FogOfWar() : Item(ItemType::FOG_OF_WAR, true) {}
 
 	ItemType getItemType() const override {
 		return ItemType::FOG_OF_WAR;
-	}
-
-	char getSymbol() const override {
-		return 'F';
-	}
-
-	bool isWalkable() const override {
-		return true;
 	}
 
 	void onEnter() override {
