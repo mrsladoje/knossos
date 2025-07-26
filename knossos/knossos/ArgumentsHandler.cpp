@@ -6,7 +6,6 @@ using std::string;
 using std::cout;
 using std::cerr;
 
-
 void printManual(const string& programName) {
 	cout << "\nWrong arguments - unfortunately the maze guard had to turn you away!\n\n";
     cout << "Usage: " << programName << " <width> <height> <number_of_items>\n\n";
@@ -59,5 +58,12 @@ bool parseArguments(int argc, char* argv[], unsigned int& width,
     catch (const std::out_of_range& e) {
         cerr << "Error: Number out of range in arguments\n";
         return false;
+    }
+}
+
+void handleArguments(int argc, char* argv[], unsigned int& width, unsigned int& height, unsigned int& items) {
+    if (!parseArguments(argc, argv, width, height, items)) {
+        printManual(argv[0]);
+        exit(1);
     }
 }

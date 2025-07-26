@@ -2,6 +2,7 @@
 #include <random>
 #include <set>
 #include <chrono>
+#include <stdexcept>
 
 #include "Matrix.h"
 #include "MatrixField.h"
@@ -16,6 +17,7 @@ using std::set;
 using std::pair;
 using std::make_pair;
 using std::cout;
+using std::cerr;
 using std::chrono::high_resolution_clock;
 using std::chrono::duration_cast;
 using std::chrono::microseconds;
@@ -267,7 +269,7 @@ void Matrix::placeItems(unsigned int no_of_items, unsigned int robot_x, unsigned
 	}
 
 	if (availablePositions.empty()) {
-		cout << "Warning: No available positions for items!\n";
+		cerr << "Warning: No available positions for items!\n";
 		return;
 	}
 
@@ -282,6 +284,27 @@ void Matrix::placeItems(unsigned int no_of_items, unsigned int robot_x, unsigned
 		delete fields[x][y];
 		fields[x][y] = createRandomItem();
 	}
+}
+
+pair<unsigned int, unsigned int> Matrix::getRandomPassage(unsigned int robot_x) const {
+	vector<pair<unsigned int, unsigned int>> availablePositions;
+
+	for (unsigned int x = 1; x < width - 1; ++x) {
+		for (unsigned int y = 1; y < height - 1; ++y) {
+			if (x == robot_x && y == 1) continue;
+
+			if (getFieldType(x, y) == FieldType::PASSAGE) {
+				availablePositions.push_back(make_pair(x, y));
+			}
+		}
+	}
+
+	if (availablePositions.empty()) {
+		cerr << "Warning: No available positions for minotaur!\n";
+		return make_pair(-1, -1);
+	}
+
+	return availablePositions[getRandomNumber(0, static_cast<unsigned int>(availablePositions.size()) - 1)];
 }
 
 void Matrix::generateMatrix(unsigned int no_of_items) {
@@ -300,15 +323,28 @@ void Matrix::generateMatrix(unsigned int no_of_items) {
 	auto duration_microseconds = duration_cast<microseconds>(end_time - start_time);
 	auto duration_milliseconds = duration_cast<milliseconds>(end_time - start_time);
 
-	cout << "Quick Trivia: Legend says that it took Daedalus only " << duration_milliseconds.count() << " ms ("
+	cout << "- Quick Trivia: Legend says that it took Daedalus only " << duration_milliseconds.count() << " ms ("
 		<< duration_microseconds.count() << " microseconds) to build the labyrinth (apparently Zeus helped him)\n\n";
 }
 
-void Matrix::printMatrix() const {
+void Matrix::printMatrix(unsigned int robot_x, unsigned int robot_y, unsigned int minotaur_x, unsigned int minotaur_y) const {
 	for (unsigned int i = 0; i < height; ++i) {
+		cout << "  ";
 		for (unsigned int j = 0; j < width; ++j) {
-			std::cout << fields[j][i]->getSymbol();
+			if (robot_x == j && robot_y == i)
+				cout << 'R'; 
+			else if (minotaur_x == j && minotaur_y == i)
+				cout << 'M';  
+			else
+				cout << fields[j][i]->getSymbol();
 		}
-		std::cout << std::endl;
+		cout << "\n";
+	}
+}
+unsigned int Matrix::getEntranceX() const {
+	for (unsigned int x = 0; x < width; ++x) {
+		if (getFieldType(x, 0) == FieldType::ENTRANCE) {
+			return x;
+		}
 	}
 }

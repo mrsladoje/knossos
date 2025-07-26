@@ -128,11 +128,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ArgumentsHandler.cpp" />
+    <ClCompile Include="Gameplay.cpp" />
     <ClCompile Include="knossos.cpp" />
     <ClCompile Include="Matrix.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ArgumentsHandler.h" />
+    <ClInclude Include="Gameplay.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="MatrixField.h" />
   </ItemGroup>

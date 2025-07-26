@@ -38,5 +38,9 @@ public:
 	
 	void generateMatrix(unsigned int no_of_items);
 
-	void printMatrix() const;
+	void printMatrix(unsigned int robot_x, unsigned int robot_y, unsigned int minotaur_x, unsigned int minotaur_y) const;
+
+	pair<unsigned int, unsigned int> getRandomPassage(unsigned int robot_x) const;
+	
+	unsigned int getEntranceX() const;
 };
