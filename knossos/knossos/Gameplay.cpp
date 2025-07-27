@@ -188,6 +188,71 @@ bool Gameplay::checkGameEndConditions() {
     return false;
 }
 
+void Gameplay::fillEffectHearts(unsigned int y, unsigned int no_of_hearts) {
+    moveCursorToMatrixPosition(3 + width + 20, y, height, initial_console_size);
+
+    for (unsigned int i = 0; i < 3; ++i) {
+        if (i < no_of_hearts) {
+            cout << "\x1B[41;36m" << "0" << "\x1B[0m"; 
+        }
+        else {
+            cout << "\x1B[31m" << "0" << "\x1B[0m"; 
+        }
+
+        if (i < 2) {
+            cout << " ";
+        }
+    }
+
+    cout.flush();
+
+    moveCursorToMatrixPosition(3 + width + 3, y, height, initial_console_size);
+    if (no_of_hearts > 0) cout << "\x1B[5;36m" << "o" << "\x1B[0m";
+	else cout << "\x1B[0m" << "o" << "\x1B[0m";
+	cout.flush();
+}
+
+void Gameplay::recalculateEffects() {
+    if (sword_rounds_left > 0) {
+        --sword_rounds_left;
+        fillEffectHearts(1, sword_rounds_left);
+    }
+    if (shield_rounds_left > 0) {
+        --shield_rounds_left;
+        fillEffectHearts(3, shield_rounds_left);
+    }
+    if (hammer_rounds_left > 0) {
+        --hammer_rounds_left;
+        fillEffectHearts(5, hammer_rounds_left);
+    }
+    if (fog_of_war_rounds_left > 0) {
+        --fog_of_war_rounds_left;
+        fillEffectHearts(7, fog_of_war_rounds_left);
+    }
+	positionCursorAtRobot();
+}
+
+void Gameplay::activateEffect(ItemType itemType) {
+    switch (itemType) {
+    case ItemType::SWORD:
+		sword_rounds_left = 4;
+		fillEffectHearts(1, sword_rounds_left);
+        break;
+    case ItemType::SHIELD:
+		shield_rounds_left = 4;
+		fillEffectHearts(3, shield_rounds_left);
+        break;
+    case ItemType::HAMMER:
+		hammer_rounds_left = 4;
+		fillEffectHearts(5, hammer_rounds_left);
+        break;
+    case ItemType::FOG_OF_WAR:
+		fog_of_war_rounds_left = 4;
+		fillEffectHearts(7, fog_of_war_rounds_left);
+        break;
+    }
+}
+
 void Gameplay::startGameLoop() {
     bool gameRunning = true;
 	bool gaveUpWithQ = false;
@@ -206,6 +271,8 @@ void Gameplay::startGameLoop() {
     cout << "\033[?25h"; // Show cursor
 
     while (gameRunning) {
+		recalculateEffects();
+
         // Get valid input - this will ONLY return w, a, s, d, or q
         // Invalid keys are silently ignored
         char input = getValidKeyPress();
@@ -257,6 +324,17 @@ void Gameplay::startGameLoop() {
             // Update robot position
             robot_x = new_robot_x;
             robot_y = new_robot_y;
+
+			// Check if robot stepped on an item
+			if (matrix->getFieldType(robot_x, robot_y) == FieldType::ITEM) {
+                MatrixField* field = matrix->getField(robot_x, robot_y);
+                Item* item = dynamic_cast<Item*>(field);
+
+                if (item != nullptr) {
+                    activateEffect(item->getItemType());
+					matrix->setField(robot_x, robot_y, FieldType::PASSAGE);
+                }
+			}
 
             // Draw robot at new position
             updateMatrixCharacter(robot_x, robot_y, 'R');

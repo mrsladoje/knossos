@@ -24,6 +24,9 @@ private:
 	void positionCursorAtRobot() const;
 	void moveMinotaur(unsigned int prev_minotaur_x, unsigned int prev_minotaur_y);
 	bool checkGameEndConditions();
+	void activateEffect(ItemType itemType);
+	void recalculateEffects();
+	void fillEffectHearts(unsigned int y, unsigned int no_of_hearts);
 
 public:
 	Gameplay(unsigned int width, unsigned int height)

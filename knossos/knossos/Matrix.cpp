@@ -390,6 +390,20 @@ void Matrix::printMatrix(unsigned int robot_x, unsigned int robot_y, unsigned in
 				else cout << fields[j][i]->getSymbol();
 			}
 		}
+
+		if (i == 1) { 
+			cout << "      o Sword: \x1B[31m        0 0 0\x1B[0m";
+		}
+		else if (i == 3) {
+			cout << "      o Shield: \x1B[31m       0 0 0\x1B[0m";
+		}
+		else if (i == 5) {
+			cout << "      o Hammer: \x1B[31m       0 0 0\x1B[0m";
+		} 
+		else if (i == 7) { 
+			cout << "      o Fog of War: \x1B[31m   0 0 0\x1B[0m";
+		}
+
 		cout << "\n";
 	}
 	cout << "\n";
