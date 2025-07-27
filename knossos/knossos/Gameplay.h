@@ -20,12 +20,10 @@ private:
 	pair<int, int> initial_console_size;
 	Matrix* matrix;
 
-	void moveCursorToMatrixPosition(unsigned int x, unsigned int y) const;
 	void updateMatrixCharacter(unsigned int x, unsigned int y, char symbol) const;
 	void positionCursorAtRobot() const;
 	void moveMinotaur(unsigned int prev_minotaur_x, unsigned int prev_minotaur_y);
 	bool checkGameEndConditions();
-	char getValidKeyPress();
 
 public:
 	Gameplay(unsigned int width, unsigned int height)

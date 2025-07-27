@@ -2,58 +2,16 @@
 #include <vector>
 #include <cctype>
 
-#ifdef _WIN32
-    #include <conio.h>      // Windows: for _getch()
-#else
-    #include <termios.h>    // Unix/Linux/Mac: for terminal control
-    #include <unistd.h>     // Unix/Linux/Mac: for STDIN_FILENO
-#endif
-
 #include "Matrix.h"
 #include "Gameplay.h"
+#include "ConsoleHandler.h"
 
 using std::cout;
-using std::cin;
-using std::tolower;
 using std::pair;
-using std::make_pair;
 using std::vector;
 
-
-#ifdef _WIN32
-#include <windows.h>
-
-pair<int, int> getConsoleSize() {
-    CONSOLE_SCREEN_BUFFER_INFO csbi;
-    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
-    int height = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
-    int width = csbi.srWindow.Right - csbi.srWindow.Left + 1;
-    return make_pair(width, height);
-}
-#else
-#include <sys/ioctl.h>
-
-pair<int, int> getConsoleSize() {
-    struct winsize w;
-    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
-    return make_pair(w.ws_col, w.ws_row);
-}
-#endif
-
-void Gameplay::moveCursorToMatrixPosition(unsigned int x, unsigned int y) const {
-	int console_width = initial_console_size.first;
-	int console_height = initial_console_size.second;
-
-    // Calculate matrix start position from bottom
-    unsigned int matrix_start_from_bottom = height + 1; 
-    unsigned int terminal_row = console_height - matrix_start_from_bottom + y;
-    unsigned int terminal_col = x + 3; 
-
-    cout << "\033[" << terminal_row << ";" << terminal_col << "H";
-}
-
 void Gameplay::updateMatrixCharacter(unsigned int x, unsigned int y, char symbol) const {
-	moveCursorToMatrixPosition(x, y);
+	moveCursorToMatrixPosition(x, y, height, initial_console_size);
 	if (symbol == 'R') {
         cout << "\x1B[5;34;48;2;110;110;110m" << 'R' << "\x1B[0m";
 	}
@@ -74,7 +32,7 @@ void Gameplay::updateMatrixCharacter(unsigned int x, unsigned int y, char symbol
 
 // Position cursor at robot's location so that it blinks there
 void Gameplay::positionCursorAtRobot() const {
-	moveCursorToMatrixPosition(robot_x, robot_y);
+	moveCursorToMatrixPosition(robot_x, robot_y, height, initial_console_size);
 }
 
 void Gameplay::initializeGame(unsigned int no_of_items) {
@@ -201,7 +159,7 @@ void Gameplay::moveMinotaur(unsigned int prev_minotaur_x, unsigned int prev_mino
 bool Gameplay::checkGameEndConditions() {
     // Check if robot reached exit
     if (matrix->getFieldType(robot_x, robot_y) == FieldType::EXIT) {
-        moveCursorToMatrixPosition(-3, robot_y + static_cast<unsigned int>(4));
+        moveCursorToMatrixPosition(-3, robot_y + static_cast<unsigned int>(4), height, initial_console_size);
         cout << "\x1B[38;2;255;215;0;46m" << "\n - Zeus, King of Olympus, thunders from above: \n" << "\x1B[0m";
         cout << "\n\n   \"MAGNIFICENT, MORTAL! Your courage rivals that of the greatest heroes!\n";
         cout << "    By my lightning bolt, you have conquered the labyrinth that has claimed countless souls!\n\n";
@@ -215,7 +173,7 @@ bool Gameplay::checkGameEndConditions() {
 
     // Check if minotaur caught robot
     if (robot_x == minotaur_x && robot_y == minotaur_y) {
-        moveCursorToMatrixPosition(-3, height + static_cast<unsigned int>(2));
+        moveCursorToMatrixPosition(-3, height + static_cast<unsigned int>(2), height, initial_console_size);
         cout << "\x1B[38;2;0;151;255;47m" << "\n - Poseidon, Lord of the Seas, emerges from the depths: \n" << "\x1B[0m";
         cout << "\n\n   \"My son... my brave Theseus...\n";
         cout << "    I have watched your journey through these cursed halls with great pride.\n\n";
@@ -228,81 +186,6 @@ bool Gameplay::checkGameEndConditions() {
     }
 
     return false;
-}
-
-char Gameplay::getValidKeyPress() {
-    char key;
-
-    while (true) {
-#ifdef _WIN32
-        // WINDOWS IMPLEMENTATION
-        // _getch() reads a single character immediately without Enter
-        // It doesn't echo the character to the screen
-        key = _getch();
-
-        // Handle special cases on Windows
-        if (key == 0 || key == -32) {
-            // Arrow keys and function keys send two characters
-            // First is 0 or -32, second is the actual key code
-            // We read and discard the second character
-            _getch();
-            continue; // Ignore these keys and wait for another
-        }
-
-#else
-        // UNIX/LINUX/MAC IMPLEMENTATION
-        // We need to temporarily change terminal settings
-        struct termios oldTermios, newTermios;
-
-        // Get current terminal settings
-        tcgetattr(STDIN_FILENO, &oldTermios);
-
-        // Copy current settings to modify them
-        newTermios = oldTermios;
-
-        // Disable canonical mode (line buffering) and echo
-        // ICANON: canonical input (wait for Enter)
-        // ECHO: echo typed characters to screen
-        newTermios.c_lflag &= ~(ICANON | ECHO);
-
-        // Apply new settings immediately
-        tcsetattr(STDIN_FILENO, TCSANOW, &newTermios);
-
-        // Read single character
-        key = getchar();
-
-        // Restore original terminal settings immediately
-        tcsetattr(STDIN_FILENO, TCSANOW, &oldTermios);
-
-        // Handle arrow keys on Unix (they send escape sequences)
-        if (key == 27) { // ESC character starts arrow key sequence
-            // Try to read the next characters of the sequence
-            // Set terminal to non-blocking mode temporarily
-            struct termios tempTermios = oldTermios;
-            tempTermios.c_lflag &= ~(ICANON | ECHO);
-            tempTermios.c_cc[VMIN] = 0;  // Don't wait for characters
-            tempTermios.c_cc[VTIME] = 1; // Wait 0.1 seconds max
-            tcsetattr(STDIN_FILENO, TCSANOW, &tempTermios);
-
-            char seq1 = getchar();
-            char seq2 = getchar();
-
-            // Restore settings
-            tcsetattr(STDIN_FILENO, TCSANOW, &oldTermios);
-
-            // Ignore arrow keys and continue waiting for valid input
-            continue;
-        }
-#endif
-
-        // Convert to lowercase for consistent handling
-        key = tolower(key);
-
-        // Only accept our valid game keys
-        if (key == 'w' || key == 'a' || key == 's' || key == 'd' || key == 'q') {
-            return key;
-        }
-    }
 }
 
 void Gameplay::startGameLoop() {
@@ -400,7 +283,7 @@ void Gameplay::startGameLoop() {
     }
 
 	if (gaveUpWithQ) {
-		moveCursorToMatrixPosition(-3, height + static_cast<unsigned int>(2));
+		moveCursorToMatrixPosition(-3, height + static_cast<unsigned int>(2), height, initial_console_size);
         cout << "\x1B[35;47m" << "\n - Athena, Goddess of Wisdom and Strategy, appears: \n" << "\x1B[0m";
         cout << "\n\n   \"Hold, brave Theseus! Do not let frustration cloud your judgment!\n";
         cout << "    Even the wisest warriors must sometimes retreat to fight another day.\n\n";
