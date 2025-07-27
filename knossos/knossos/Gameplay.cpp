@@ -10,23 +10,30 @@ using std::cout;
 using std::pair;
 using std::vector;
 
+void Gameplay::printMatrixCharacter(char symbol) const {
+    if (symbol == 'R') {
+        cout << "\x1B[5;34;48;2;110;110;110m" << 'R' << "\x1B[0m";
+    }
+    else if (symbol == 'M') {
+        cout << "\x1B[5;38;2;150;75;0;48;2;110;110;110m" << 'M' << "\x1B[0m";
+    }
+    else if (symbol == 'P') {
+        cout << "\x1B[31m" << 'P' << "\x1B[0m";
+    }
+    else if (symbol == 'E') {
+        cout << "\x1B[5;32m" << 'E' << "\x1B[0m";
+    }
+    else if (symbol == '#') {
+        cout << "\x1B[47m" << '#' << "\x1B[0m";
+    }
+    else {
+        cout << symbol;
+    }
+}
+
 void Gameplay::updateMatrixCharacter(unsigned int x, unsigned int y, char symbol) const {
 	moveCursorToMatrixPosition(x, y, height, initial_console_size);
-	if (symbol == 'R') {
-        cout << "\x1B[5;34;48;2;110;110;110m" << 'R' << "\x1B[0m";
-	}
-	else if (symbol == 'M') {
-        cout << "\x1B[5;38;2;150;75;0;48;2;110;110;110m" << 'M' << "\x1B[0m";
-	}
-	else if (symbol == 'P') {
-        cout << "\x1B[31m" << 'P' << "\x1B[0m"; 
-	}
-	else if (symbol == 'E') {
-		cout << "\x1B[5;32m" << 'E' << "\x1B[0m"; 
-	}
-	else {
-		cout << symbol; 
-	}
+	printMatrixCharacter(symbol);
 	cout.flush(); 
 }
 
@@ -198,7 +205,6 @@ void Gameplay::fillEffectHearts(unsigned int y, unsigned int no_of_hearts) {
         else {
             cout << "\x1B[31m" << "0" << "\x1B[0m"; 
         }
-
         if (i < 2) {
             cout << " ";
         }
@@ -227,6 +233,9 @@ void Gameplay::recalculateEffects() {
     }
     if (fog_of_war_rounds_left > 0) {
         --fog_of_war_rounds_left;
+		if (fog_of_war_rounds_left == 0) {
+			redrawMatrixAfterFog();
+		}
         fillEffectHearts(7, fog_of_war_rounds_left);
     }
 	positionCursorAtRobot();
@@ -253,6 +262,81 @@ void Gameplay::activateEffect(ItemType itemType) {
     }
 }
 
+void Gameplay::drawFog() const {
+    if (fog_of_war_rounds_left > 0) {
+		moveCursorToMatrixPosition(0, 0, height, initial_console_size);
+        for (int i = 0; i < height; i++) {
+            if (abs((int)i - (int)robot_y) <= 1) {
+                for (int j = 0; j < width; j++) {
+                    if (abs((int)j - (int)robot_x) > 1) {
+                        int rnum = matrix->getRandomNumber(1, 15);
+                        char symbol = rnum == 1 ? '#' : ' ';
+                        rnum = matrix->getRandomNumber(1, 2);
+                        if (rnum % 2 == 0) {
+                            cout << "\x1B[5;34;48;5;248m" << symbol << "\x1B[0m";
+                        }
+                        else {
+                            cout << "\x1B[5;35;48;5;248m" << symbol << "\x1B[0m";
+                        }
+                    }
+					else {
+						char symbol = matrix->getField(j, i)->getSymbol();
+						if (robot_x == j && robot_y == i) {
+							symbol = 'R';
+						}
+						else if (minotaur_x == j && minotaur_y == i) {
+							symbol = 'M';
+						}
+                        printMatrixCharacter(symbol);
+					}
+                }
+                moveCursorToMatrixPosition(0, i+1, height, initial_console_size);
+                continue;
+            }
+            for (int j = 0; j < width; j++) {
+				int rnum = matrix->getRandomNumber(1, 15);
+				char symbol = rnum == 1 ? '#' : ' ';
+				rnum = matrix->getRandomNumber(1, 2);
+                if (rnum % 2 == 0) {
+                    cout << "\x1B[5;35;48;5;248m" << symbol << "\x1B[0m";
+                }
+                else {
+                    cout << "\x1B[5;34;48;5;248m" << symbol << "\x1B[0m";
+                }
+            }
+            cout << "\n  ";
+        }
+        
+        cout.flush();
+
+        positionCursorAtRobot();
+    }
+}
+
+void Gameplay::redrawMatrixAfterFog() const {
+    if (fog_of_war_rounds_left == 0) {
+        moveCursorToMatrixPosition(0, 0, height, initial_console_size);
+        for (int i = 0; i < height; i++) {
+                for (int j = 0; j < width; j++) {
+                    char symbol = matrix->getField(j, i)->getSymbol();
+                    if (robot_x == j && robot_y == i) {
+                        symbol = 'R';
+                    }
+                    else if (minotaur_x == j && minotaur_y == i) {
+                        symbol = 'M';
+                    }
+                    printMatrixCharacter(symbol);
+                }
+            cout << "\n  ";
+        }
+
+        cout.flush();
+
+        positionCursorAtRobot();
+    }
+}
+
+
 void Gameplay::startGameLoop() {
     bool gameRunning = true;
 	bool gaveUpWithQ = false;
@@ -272,6 +356,9 @@ void Gameplay::startGameLoop() {
 
     while (gameRunning) {
 		recalculateEffects();
+		if (fog_of_war_rounds_left > 0) {
+            drawFog();
+		}
 
         // Get valid input - this will ONLY return w, a, s, d, or q
         // Invalid keys are silently ignored

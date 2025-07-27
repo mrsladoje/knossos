@@ -31,8 +31,6 @@ public:
 	virtual FieldType getFieldType() const = 0;
 	virtual char getSymbol() const = 0;
 	virtual bool isWalkable() const = 0;
-
-	virtual void onEnter() {};
 };
 
 class Passage : public MatrixField {
@@ -101,10 +99,6 @@ public:
 	bool isWalkable() const override {
 		return true;
 	}
-
-	void onEnter() override {
-		std::cout << "You have exited the maze!" << std::endl;
-	}
 };
 
 class Item : public MatrixField {
@@ -138,10 +132,6 @@ public:
 	ItemType getItemType() const override {
 		return ItemType::SWORD;
 	}
-
-	void onEnter() override {
-		std::cout << "You have picked up a sword!" << std::endl;
-	}
 };
 
 class Shield : public Item {
@@ -150,10 +140,6 @@ public:
 
 	ItemType getItemType() const override {
 		return ItemType::SHIELD;
-	}
-
-	void onEnter() override {
-		std::cout << "You have picked up a shield!" << std::endl;
 	}
 };
 
@@ -164,10 +150,6 @@ public:
 	ItemType getItemType() const override {
 		return ItemType::HAMMER;
 	}
-
-	void onEnter() override {
-		std::cout << "You have picked up a hammer!" << std::endl;
-	}
 };
 
 class FogOfWar : public Item {
@@ -176,9 +158,5 @@ public:
 
 	ItemType getItemType() const override {
 		return ItemType::FOG_OF_WAR;
-	}
-
-	void onEnter() override {
-		std::cout << "You have picked up a fog of war!" << std::endl;
 	}
 };

@@ -20,6 +20,7 @@ private:
 	pair<int, int> initial_console_size;
 	Matrix* matrix;
 
+	void printMatrixCharacter(char symbol) const;
 	void updateMatrixCharacter(unsigned int x, unsigned int y, char symbol) const;
 	void positionCursorAtRobot() const;
 	void moveMinotaur(unsigned int prev_minotaur_x, unsigned int prev_minotaur_y);
@@ -27,6 +28,8 @@ private:
 	void activateEffect(ItemType itemType);
 	void recalculateEffects();
 	void fillEffectHearts(unsigned int y, unsigned int no_of_hearts);
+	void drawFog() const;
+	void redrawMatrixAfterFog() const;
 
 public:
 	Gameplay(unsigned int width, unsigned int height)
