@@ -16,6 +16,7 @@ int main(int argc, char* argv[])
 
 	Gameplay game(width, height);
 	game.initializeGame(no_of_items);
+	game.startGameLoop();
 
 	return 0;
 }

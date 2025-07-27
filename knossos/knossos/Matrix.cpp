@@ -24,6 +24,7 @@ using std::chrono::microseconds;
 using std::chrono::milliseconds;
 using std::min;
 using std::random_shuffle;
+using std::out_of_range;
 
 random_device Matrix::rd;
 mersenne_twister Matrix::gen(Matrix::rd());
@@ -69,6 +70,34 @@ FieldType Matrix::getFieldType(unsigned int x, unsigned int y) const {
 	}
 	else {
 		return FieldType::WALL;
+	}
+}
+
+void Matrix::setField(unsigned int x, unsigned int y, FieldType fieldType) {
+	if (x < width && x >= 0 && y < height && y >= 0) {
+		delete fields[x][y];
+		switch (fieldType) {
+		case FieldType::PASSAGE:
+			fields[x][y] = new Passage();
+			break;
+		case FieldType::WALL:
+			fields[x][y] = new Wall();
+			break;
+		case FieldType::ENTRANCE:
+			fields[x][y] = new Entrance();
+			break;
+		case FieldType::EXIT:
+			fields[x][y] = new Exit();
+			break;
+		case FieldType::ITEM:
+			fields[x][y] = createRandomItem();
+			break;
+		default:
+			fields[x][y] = new Passage();
+		}
+	}
+	else {
+		throw out_of_range("Coordinates out of bounds");
 	}
 }
 
@@ -286,7 +315,17 @@ void Matrix::placeItems(unsigned int no_of_items, unsigned int robot_x, unsigned
 	}
 }
 
-pair<unsigned int, unsigned int> Matrix::getRandomPassage(unsigned int robot_x) const {
+/**
+ * @brief This function checks if the minotaur and the robot are placed on the same color cells in the matrix (needed for proper game mechanics).
+ * @param robot_x The x coordinate of the robot.
+ * @param minotaur_pos The potential (x,y) of the minotaur.
+ * @return Returns true if the minotaur can be placed on the potential field.
+ */
+bool Matrix::minotaurPositionChessboardCheck(unsigned int robot_x, pair<unsigned int, unsigned int> minotaur_pos) const {
+	return ((robot_x + 1) % 2 == (minotaur_pos.first + minotaur_pos.second) % 2);
+}
+
+pair<unsigned int, unsigned int> Matrix::getRandomPassageForMinotaur(unsigned int robot_x) const {
 	vector<pair<unsigned int, unsigned int>> availablePositions;
 
 	for (unsigned int x = 1; x < width - 1; ++x) {
@@ -304,7 +343,11 @@ pair<unsigned int, unsigned int> Matrix::getRandomPassage(unsigned int robot_x) 
 		return make_pair(-1, -1);
 	}
 
-	return availablePositions[getRandomNumber(0, static_cast<unsigned int>(availablePositions.size()) - 1)];
+	pair<unsigned int, unsigned int> minotaur_pos = availablePositions[getRandomNumber(0, static_cast<unsigned int>(availablePositions.size()) - 1)];
+	while (!minotaurPositionChessboardCheck(robot_x, minotaur_pos)) {
+		minotaur_pos = availablePositions[getRandomNumber(0, static_cast<unsigned int>(availablePositions.size()) - 1)];
+	}
+	return minotaur_pos;
 }
 
 void Matrix::generateMatrix(unsigned int no_of_items) {
@@ -324,7 +367,7 @@ void Matrix::generateMatrix(unsigned int no_of_items) {
 	auto duration_milliseconds = duration_cast<milliseconds>(end_time - start_time);
 
 	cout << "\x1B[38;2;0;0;155;47m" << " - Quick Trivia: " << "\x1B[0m" << " Legend says that it took Daedalus only " << duration_milliseconds.count() << " ms ("
-		<< duration_microseconds.count() << " microseconds) to build the labyrinth (apparently Zeus helped him)\n\n";
+		<< duration_microseconds.count() << " microseconds) to build the labyrinth (apparently Zeus helped him)...\n\n";
 }
 
 void Matrix::printMatrix(unsigned int robot_x, unsigned int robot_y, unsigned int minotaur_x, unsigned int minotaur_y) const {
@@ -332,16 +375,18 @@ void Matrix::printMatrix(unsigned int robot_x, unsigned int robot_y, unsigned in
 		cout << "  ";
 		for (unsigned int j = 0; j < width; ++j) {
 			if (robot_x == j && robot_y == i)
-				cout << "\x1B[5;34m" << 'R' << "\x1B[0m";
+				cout << "\x1B[5;34;48;2;110;110;110m" << 'R' << "\x1B[0m";
 			else if (minotaur_x == j && minotaur_y == i)
-				cout << "\x1B[5;38;2;150;75;0m" << 'M' << "\x1B[0m";
+				cout << "\x1B[5;38;2;150;75;0;48;2;77;77;77m" << 'M' << "\x1B[0m";
 			else {
 				if (fields[j][i]->getFieldType() == FieldType::WALL)
 					cout << "\x1B[47m" << fields[j][i]->getSymbol() << "\x1B[0m";
 				else if (fields[j][i]->getFieldType() == FieldType::ITEM)
 					cout << "\x1B[31m" << fields[j][i]->getSymbol() << "\x1B[0m";
-				else if (fields[j][i]->getFieldType() == FieldType::ENTRANCE || fields[j][i]->getFieldType() == FieldType::EXIT)
+				else if (fields[j][i]->getFieldType() == FieldType::ENTRANCE)
 					cout << "\x1B[33m" << fields[j][i]->getSymbol() << "\x1B[0m";
+				else if (fields[j][i]->getFieldType() == FieldType::EXIT)
+					cout << "\x1B[32m" << fields[j][i]->getSymbol() << "\x1B[0m";
 				else cout << fields[j][i]->getSymbol();
 			}
 		}
