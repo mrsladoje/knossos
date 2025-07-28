@@ -91,6 +91,42 @@ void Gameplay::initializeGame(unsigned int no_of_items) {
 	initial_console_size = getConsoleSize();
 }
 
+pair<unsigned int, unsigned int> Gameplay::getMinotaurBounceCoordinates() {
+    // Calculate all possible positions 2 fields away from robot
+    vector<pair<unsigned int, unsigned int>> validBouncePositions;
+
+    // Check all positions in a 5x5 grid centered on robot (distance 2 from robot)
+    for (int dx = -2; dx <= 2; dx++) {
+        for (int dy = -2; dy <= 2; dy++) {
+            // Skip positions that are not exactly distance 2
+            if (abs(dx) + abs(dy) != 2) continue;
+
+            int new_x = static_cast<int>(robot_x) + dx;
+            int new_y = static_cast<int>(robot_y) + dy;
+
+            // Check if position is within bounds
+            if (new_x >= 0 && new_x < static_cast<int>(width) &&
+                new_y >= 0 && new_y < static_cast<int>(height)) {
+
+                // Check if position is walkable
+                if (matrix->getField(static_cast<unsigned int>(new_x),
+                    static_cast<unsigned int>(new_y))->isWalkable()) {
+                    validBouncePositions.push_back({ static_cast<unsigned int>(new_x),
+                                                   static_cast<unsigned int>(new_y) });
+                }
+            }
+        }
+    }
+
+    // If we found valid positions, bounce minotaur to one of them
+    if (!validBouncePositions.empty()) {
+        int randomIndex = matrix->getRandomNumber(0, validBouncePositions.size() - 1);
+        pair<unsigned int, unsigned int> bouncePosition = validBouncePositions[randomIndex];
+
+        return bouncePosition;
+    }
+}
+
 bool Gameplay::minotaurAlive() const {
 	return minotaur_x != -1 && minotaur_y != -1;
 }
@@ -116,6 +152,12 @@ void Gameplay::moveMinotaur(unsigned int prev_minotaur_x, unsigned int prev_mino
         if (sword_rounds_left == 0) {
             new_minotaur_x = robot_x;
             new_minotaur_y = robot_y;
+
+            if (shield_rounds_left > 0) {
+				pair<unsigned int, unsigned int> bouncePosition = getMinotaurBounceCoordinates();
+				new_minotaur_x = bouncePosition.first;
+				new_minotaur_y = bouncePosition.second;
+            }
         }
 		else {
 			// If robot has sword, minotaur dies

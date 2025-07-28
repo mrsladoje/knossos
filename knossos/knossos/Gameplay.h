@@ -32,6 +32,7 @@ private:
 	void redrawMatrixAfterFog() const;
 	bool minotaurAlive() const;
 	void ariadneCongratulates() const;
+	pair<unsigned int, unsigned int> getMinotaurBounceCoordinates();
 
 public:
 	Gameplay(unsigned int width, unsigned int height)

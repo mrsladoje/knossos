@@ -282,7 +282,7 @@ MatrixField* Matrix::createRandomItem() const {
 	case 4: return new FogOfWar();
 	default: return new Sword();
 	}*/
-	return new Sword(); 
+	return new Shield(); 
 }
 
 void Matrix::placeItems(unsigned int no_of_items, unsigned int robot_x, unsigned int robot_y) {
