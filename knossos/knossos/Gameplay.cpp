@@ -26,6 +26,12 @@ void Gameplay::printMatrixCharacter(char symbol) const {
     else if (symbol == '#') {
         cout << "\x1B[47m" << '#' << "\x1B[0m";
     }
+    else if (symbol == 'U') {
+		cout << "\x1B[33m" << 'U' << "\x1B[0m";
+	}
+	else if (symbol == 'I') {
+		cout << "\x1B[32m" << 'I' << "\x1B[0m";
+	}
     else {
         cout << symbol;
     }
@@ -85,6 +91,10 @@ void Gameplay::initializeGame(unsigned int no_of_items) {
 	initial_console_size = getConsoleSize();
 }
 
+bool Gameplay::minotaurAlive() const {
+	return minotaur_x != -1 && minotaur_y != -1;
+}
+
 void Gameplay::moveMinotaur(unsigned int prev_minotaur_x, unsigned int prev_minotaur_y) {
     unsigned int new_minotaur_x = minotaur_x;
     unsigned int new_minotaur_y = minotaur_y;
@@ -103,8 +113,16 @@ void Gameplay::moveMinotaur(unsigned int prev_minotaur_x, unsigned int prev_mino
 
     // MUST move toward robot to eat it
     if (robotInEatingRange) {
-        new_minotaur_x = robot_x;
-        new_minotaur_y = robot_y;
+        if (sword_rounds_left == 0) {
+            new_minotaur_x = robot_x;
+            new_minotaur_y = robot_y;
+        }
+		else {
+			// If robot has sword, minotaur dies
+			new_minotaur_x = -1;
+			new_minotaur_y = -1;
+            ariadneCongratulates();
+		}
     }
     else {
         vector<int> validDirections;
@@ -153,13 +171,16 @@ void Gameplay::moveMinotaur(unsigned int prev_minotaur_x, unsigned int prev_mino
         minotaur_x = new_minotaur_x;
         minotaur_y = new_minotaur_y;
 
-		// Destroy item he stepped on, if any
-		if (matrix->getFieldType(minotaur_x, minotaur_y) == FieldType::ITEM) {
-			matrix->setField(minotaur_x, minotaur_y, FieldType::PASSAGE);
+        // If still alive
+		if (minotaurAlive()) {
+            // Destroy item he stepped on, if any
+            if (matrix->getFieldType(minotaur_x, minotaur_y) == FieldType::ITEM) {
+                matrix->setField(minotaur_x, minotaur_y, FieldType::PASSAGE);
+            }
+            
+			// Draw minotaur at new position
+            updateMatrixCharacter(minotaur_x, minotaur_y, 'M');
 		}
-
-        // Draw minotaur at new position    
-        updateMatrixCharacter(minotaur_x, minotaur_y, 'M');
     }
 }
 
@@ -262,6 +283,31 @@ void Gameplay::activateEffect(ItemType itemType) {
     }
 }
 
+void Gameplay::ariadneCongratulates() const {
+    moveCursorToMatrixPosition(3 + width + 32, 0, height, initial_console_size);
+    cout << "\x1B[35;47m" << " - Ariadne, Princess of Crete, emerges from the shadows: " << "\x1B[0m";
+    moveCursorToMatrixPosition(3 + width + 32, 2, height, initial_console_size);
+    cout << "  \"Theseus! My heart soars like a dove freed from its cage!\n";
+    moveCursorToMatrixPosition(3 + width + 32, 3, height, initial_console_size);
+    cout << "   You have done what no hero before you could accomplish -\n";
+    moveCursorToMatrixPosition(3 + width + 32, 4, height, initial_console_size);
+    cout << "   you've slain the beast that has haunted my father's kingdom!\n\n";
+    moveCursorToMatrixPosition(3 + width + 32, 5, height, initial_console_size);
+    cout << "   Here, take this golden thread as a token of my gratitude.\n";
+    moveCursorToMatrixPosition(3 + width + 32, 6, height, initial_console_size);
+    cout << "   It shall guide you safely to the exit, for I know every\n";
+    moveCursorToMatrixPosition(3 + width + 32, 7, height, initial_console_size);
+    cout << "   secret passage of this labyrinth by heart.\n\n";
+    moveCursorToMatrixPosition(3 + width + 32, 8, height, initial_console_size);
+    cout << "   But still... there is something far more precious -\n";
+    moveCursorToMatrixPosition(3 + width + 32, 9, height, initial_console_size);
+    cout << "   the love of one who has waited long for a true hero!\"\n\n";
+
+    moveCursorToMatrixPosition(3 + width + 32, 11, height, initial_console_size);
+    cout << "\x1B[38;2;255;215;0m" << " -----<3----<3----<3----<3----<3----<3----<3----<3\n" << "\x1B[0m";
+    positionCursorAtRobot();
+}
+
 void Gameplay::drawFog() const {
     if (fog_of_war_rounds_left > 0) {
 		moveCursorToMatrixPosition(0, 0, height, initial_console_size);
@@ -335,7 +381,6 @@ void Gameplay::redrawMatrixAfterFog() const {
         positionCursorAtRobot();
     }
 }
-
 
 void Gameplay::startGameLoop() {
     bool gameRunning = true;
@@ -430,10 +475,12 @@ void Gameplay::startGameLoop() {
             prev_robot_x = robot_x;
             prev_robot_y = robot_y;
 
-            // Now handle Minotaur movement
-            moveMinotaur(prev_minotaur_x, prev_minotaur_y);
-            prev_minotaur_x = minotaur_x;
-            prev_minotaur_y = minotaur_y;
+            if (minotaurAlive()) {
+                // Now handle Minotaur movement
+                moveMinotaur(prev_minotaur_x, prev_minotaur_y);
+                prev_minotaur_x = minotaur_x;
+                prev_minotaur_y = minotaur_y;
+            }
 
             // Check for game end conditions
             if (checkGameEndConditions()) {

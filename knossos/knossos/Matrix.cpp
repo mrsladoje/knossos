@@ -273,7 +273,7 @@ void Matrix::assurePathConnectivity(unsigned int exit_x) {
 }
 
 MatrixField* Matrix::createRandomItem() const {
-	unsigned int itemChoice = getRandomNumber(1, 4);
+	/*unsigned int itemChoice = getRandomNumber(1, 4);
 
 	switch (itemChoice) {
 	case 1: return new Sword();
@@ -281,7 +281,8 @@ MatrixField* Matrix::createRandomItem() const {
 	case 3: return new Hammer();
 	case 4: return new FogOfWar();
 	default: return new Sword();
-	}
+	}*/
+	return new Sword(); 
 }
 
 void Matrix::placeItems(unsigned int no_of_items, unsigned int robot_x, unsigned int robot_y) {

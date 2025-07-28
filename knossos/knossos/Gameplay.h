@@ -30,6 +30,8 @@ private:
 	void fillEffectHearts(unsigned int y, unsigned int no_of_hearts);
 	void drawFog() const;
 	void redrawMatrixAfterFog() const;
+	bool minotaurAlive() const;
+	void ariadneCongratulates() const;
 
 public:
 	Gameplay(unsigned int width, unsigned int height)
