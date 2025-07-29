@@ -533,9 +533,11 @@ void Gameplay::startGameLoop() {
     positionCursorAtRobot();
 	showCursor();
 
+    bool robotMoved = false;
+
     while (gameRunning) {
-		recalculateEffects();
-		if (fog_of_war_rounds_left > 0) {
+		if (robotMoved) recalculateEffects();
+		if (robotMoved && fog_of_war_rounds_left > 0) {
             drawFog();
 		}
 		if (hammer_rounds_left > 0) {
@@ -550,7 +552,7 @@ void Gameplay::startGameLoop() {
         cout << "\033[?25l";
 
         // Handle user input
-        bool robotMoved = false;
+        robotMoved = false;
         unsigned int new_robot_x = robot_x;
         unsigned int new_robot_y = robot_y;
 
