@@ -128,10 +128,6 @@ robot-in-knossos/
 - **Strategy**: Collect and use items strategically
 - **Efficiency**: Complete the maze in minimum moves
 
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
 ## 🎓 Academic Context
 
 This project was developed as part of an Object-Oriented Programming course at the Faculty of Technical Sciences, University of Novi Sad. It demonstrates practical application of:
