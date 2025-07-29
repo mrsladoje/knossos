@@ -139,5 +139,4 @@ MigrationBackup/
 .ionide/
 
 # Game reports
-
-.txt
+*.txt
