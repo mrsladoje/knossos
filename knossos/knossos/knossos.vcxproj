@@ -129,6 +129,7 @@
   <ItemGroup>
     <ClCompile Include="ArgumentsHandler.cpp" />
     <ClCompile Include="ConsoleHandler.cpp" />
+    <ClCompile Include="FileHandler.cpp" />
     <ClCompile Include="Gameplay.cpp" />
     <ClCompile Include="knossos.cpp" />
     <ClCompile Include="Matrix.cpp" />
@@ -137,6 +138,7 @@
   <ItemGroup>
     <ClInclude Include="ArgumentsHandler.h" />
     <ClInclude Include="ConsoleHandler.h" />
+    <ClInclude Include="FileHandler.h" />
     <ClInclude Include="Gameplay.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="MatrixField.h" />

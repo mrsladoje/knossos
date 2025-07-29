@@ -2,10 +2,12 @@
 
 #include <chrono>
 #include "Matrix.h"
+#include "FileHandler.h"
 
 using std::pair;
 using std::make_pair;
 using std::chrono::microseconds;
+using std::chrono::high_resolution_clock;
 
 class Gameplay {
 private:
@@ -22,6 +24,9 @@ private:
 	microseconds matrix_generation_time;
 	pair<int, int> initial_console_size;
 	Matrix* matrix;
+	FileHandler* fileHandler;
+	high_resolution_clock::time_point game_start_time;
+	unsigned int moves_made;
 
 	void printMatrixCharacter(char symbol) const;
 	void updateMatrixCharacter(unsigned int x, unsigned int y, char symbol) const;
@@ -51,10 +56,14 @@ public:
 		minotaur_x(0), minotaur_y(0),
 		sword_rounds_left(0), shield_rounds_left(0),
 		hammer_rounds_left(0), fog_of_war_rounds_left(0), 
-		initial_console_size(make_pair(0,0)), matrix(nullptr), matrix_generation_time(microseconds::zero()) {}
+		initial_console_size(make_pair(0,0)), matrix(nullptr), 
+		matrix_generation_time(microseconds::zero()), 
+		fileHandler(new FileHandler()), game_start_time(high_resolution_clock::now()), 
+		moves_made(0) {}
 
 	~Gameplay() {
 		delete matrix;
+		delete fileHandler;
 	}
 
 	void initializeGame(unsigned int no_of_items);

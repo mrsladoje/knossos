@@ -7,12 +7,15 @@
 #include "Gameplay.h"
 #include "ConsoleHandler.h"
 #include "RNGEngine.h"
+#include "FileHandler.h"
 
 using std::cout;
 using std::pair;
 using std::vector;
+using std::chrono::microseconds;
 using std::chrono::milliseconds;
 using std::chrono::duration_cast;
+std::chrono::high_resolution_clock;
 
 void Gameplay::printMatrixCharacter(char symbol) const {
     if (symbol == 'R') {
@@ -250,8 +253,15 @@ void Gameplay::moveMinotaur(unsigned int prev_minotaur_x, unsigned int prev_mino
 }
 
 bool Gameplay::checkGameEndConditions() {
+    auto game_end_time = high_resolution_clock::now();
+    auto game_duration = duration_cast<microseconds>(game_end_time - game_start_time);
+
     // Check if robot reached exit
     if (matrix->getFieldType(robot_x, robot_y) == FieldType::EXIT) {
+        fileHandler->saveGameResult(matrix, robot_x, robot_y, minotaur_x, minotaur_y,
+            GameResult::VICTORY, game_duration, moves_made);
+
+
         moveCursorToMatrixPosition(-3, robot_y + static_cast<unsigned int>(4), height, initial_console_size);
         cout << "\x1B[38;2;255;215;0;46m" << "\n - Zeus, King of Olympus, thunders from above: \n" << ANSICodes::RESET;
         cout << "\n\n   \"MAGNIFICENT, MORTAL! Your courage rivals that of the greatest heroes!\n";
@@ -261,11 +271,15 @@ bool Gameplay::checkGameEndConditions() {
         cout << "    Let it be known across all realms - from the depths of Hades to the heights of Olympus -\n";
         cout << "    that THIS day, a true champion walked among us!\n\n";
         cout << "\x1B[38;2;255;215;0;46m" << "    ==== THE HEAVENS REJOICE! ====    \n" << ANSICodes::RESET << "\n\n\n";
+        
         return true;
     }
 
     // Check if minotaur caught robot
     if (robot_x == minotaur_x && robot_y == minotaur_y) {
+        fileHandler->saveGameResult(matrix, robot_x, robot_y, minotaur_x, minotaur_y,
+            GameResult::DEFEATED_BY_MINOTAUR, game_duration, moves_made);
+
         moveCursorToMatrixPosition(-3, height + static_cast<unsigned int>(2), height, initial_console_size);
         cout << "\x1B[38;2;0;151;255;47m" << "\n - Poseidon, Lord of the Seas, emerges from the depths: \n" << ANSICodes::RESET;
         cout << "\n\n   \"My son... my brave Theseus...\n";
@@ -275,6 +289,7 @@ bool Gameplay::checkGameEndConditions() {
         cout << "    Do not let this defeat *tide* you over with despair - I shall craft you\n";
         cout << "    a new ally from the depths of my ocean forge!\n\n";
         cout << "    Rise again, my child. The sea never yields to any beast!\"\n\n\n";
+
         return true;
     }
 
@@ -588,10 +603,19 @@ void Gameplay::startGameLoop() {
         case 'q': 
             gameRunning = false;
 			gaveUpWithQ = true;
+
+            auto game_end_time = high_resolution_clock::now();
+            auto game_duration = duration_cast<microseconds>(game_end_time - game_start_time);
+
+            fileHandler->saveGameResult(matrix, robot_x, robot_y, minotaur_x, minotaur_y,
+                GameResult::FORFEITED, game_duration, moves_made);
+
             continue;
         }
 
         if (robotMoved) {
+            moves_made++;
+
             // Clear robot's old position (restore underlying field symbol)
             MatrixField* oldField = matrix->getField(prev_robot_x, prev_robot_y);
             updateMatrixCharacter(prev_robot_x, prev_robot_y, oldField->getSymbol());

@@ -405,3 +405,11 @@ unsigned int Matrix::getEntranceX() const {
 		}
 	}
 }
+
+unsigned int Matrix::getWidth() const { 
+	return width; 
+}
+
+unsigned int Matrix::getHeight() const { 
+	return height; 
+}

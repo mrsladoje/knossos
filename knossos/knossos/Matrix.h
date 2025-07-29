@@ -32,4 +32,6 @@ public:
 	void printMatrix(unsigned int robot_x, unsigned int robot_y, unsigned int minotaur_x, unsigned int minotaur_y) const;
 	pair<unsigned int, unsigned int> getRandomPassageForMinotaur(unsigned int robot_x) const;
 	unsigned int getEntranceX() const;
+	unsigned int getWidth() const;
+	unsigned int getHeight() const;
 };
