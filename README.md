@@ -121,30 +121,12 @@ robot-in-knossos/
 └── README.md
 ```
 
-## 🧪 Testing
-
-The project includes comprehensive testing covering:
-
-- **Maze Generation Testing**: Validation of algorithm correctness and connectivity
-- **Movement Testing**: Robot and Minotaur movement mechanics
-- **Item System Testing**: Special effects and duration mechanics
-- **Performance Testing**: Scalability analysis across different maze sizes
-
-Run tests with:
-```bash
-make test
-```
-
 ## 🎯 Game Objectives
 
 - **Primary Goal**: Navigate the robot from entrance to exit
 - **Survival**: Avoid or defeat the Minotaur
 - **Strategy**: Collect and use items strategically
 - **Efficiency**: Complete the maze in minimum moves
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
 
 ## 📄 License
 
