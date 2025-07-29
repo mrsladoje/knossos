@@ -44,6 +44,9 @@ The project follows object-oriented design principles with clean separation of c
 | **Shield** | 🛡️ | Repels Minotaur to 2 squares distance | 3 turns |
 | **Hammer** | 🔨 | Enables passage through interior walls | 3 turns |
 
+<img width="474" height="391" alt="image" src="https://github.com/user-attachments/assets/ea23b4bd-646a-469a-9c27-adb23c437f6a" />
+**Fog of War** in action
+
 ## 🚀 Getting Started
 
 ### Prerequisites
@@ -103,13 +106,6 @@ The game includes built-in performance monitoring for maze generation:
 | 30x30     | ~1.55 ms      |
 | 50x50     | ~5.12 ms      |
 | 100x100   | ~17.75 ms     |
-
-## 🎯 Game Objectives
-
-- **Primary Goal**: Navigate the robot from entrance to exit
-- **Survival**: Avoid or defeat the Minotaur
-- **Strategy**: Collect and use items strategically
-- **Efficiency**: Complete the maze in minimum moves
 
 ## 🎓 Academic Context
 
