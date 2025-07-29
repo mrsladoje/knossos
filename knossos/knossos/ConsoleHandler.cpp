@@ -104,7 +104,7 @@ char getValidKeyPress() {
         key = tolower(key);
 
         // Only accept our valid game keys
-        if (key == 'w' || key == 'a' || key == 's' || key == 'd' || key == 'q') {
+        if (key == 'w' || key == 'a' || key == 's' || key == 'd' || key == 'q' || key == 'e') {
             return key;
         }
     }
@@ -120,4 +120,23 @@ void moveCursorToMatrixPosition(unsigned int x, unsigned int y, unsigned int hei
     unsigned int terminal_col = x + 3;
 
     cout << "\033[" << terminal_row << ";" << terminal_col << "H";
+}
+
+void clearScreen() {
+#ifdef _WIN32
+    system("cls");
+#else
+    system("clear");
+#endif
+    cout.flush();
+}
+
+void hideCursor() {
+    cout << "\033[?25l";
+    cout.flush();
+}
+
+void showCursor() {
+    cout << "\033[?25h";
+    cout.flush();
 }

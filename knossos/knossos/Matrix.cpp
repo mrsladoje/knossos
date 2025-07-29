@@ -273,7 +273,7 @@ void Matrix::assurePathConnectivity(unsigned int exit_x) {
 }
 
 MatrixField* Matrix::createRandomItem() const {
-	/*unsigned int itemChoice = getRandomNumber(1, 4);
+	unsigned int itemChoice = getRandomNumber(1, 4);
 
 	switch (itemChoice) {
 	case 1: return new Sword();
@@ -281,8 +281,7 @@ MatrixField* Matrix::createRandomItem() const {
 	case 3: return new Hammer();
 	case 4: return new FogOfWar();
 	default: return new Sword();
-	}*/
-	return new Hammer(); 
+	}
 }
 
 void Matrix::placeItems(unsigned int no_of_items, unsigned int robot_x, unsigned int robot_y) {
@@ -351,7 +350,7 @@ pair<unsigned int, unsigned int> Matrix::getRandomPassageForMinotaur(unsigned in
 	return minotaur_pos;
 }
 
-void Matrix::generateMatrix(unsigned int no_of_items) {
+microseconds Matrix::generateMatrix(unsigned int no_of_items) {
 	auto start_time = high_resolution_clock::now();
 
 	pair<unsigned int, unsigned int> entrance_and_exit = setEntranceAndExit();
@@ -369,6 +368,8 @@ void Matrix::generateMatrix(unsigned int no_of_items) {
 
 	cout << "\x1B[38;2;0;0;155;47m" << " - Quick Trivia: " << "\x1B[0m" << " Legend says that it took Daedalus only " << duration_milliseconds.count() << " ms ("
 		<< duration_microseconds.count() << " microseconds) to build the labyrinth (apparently Zeus helped him)...\n\n";
+
+	return duration_microseconds;
 }
 
 void Matrix::printMatrix(unsigned int robot_x, unsigned int robot_y, unsigned int minotaur_x, unsigned int minotaur_y) const {

@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <cctype>
+#include <chrono>
 
 #include "Matrix.h"
 #include "Gameplay.h"
@@ -9,6 +10,8 @@
 using std::cout;
 using std::pair;
 using std::vector;
+using std::chrono::milliseconds;
+using std::chrono::duration_cast;
 
 void Gameplay::printMatrixCharacter(char symbol) const {
     if (symbol == 'R') {
@@ -48,18 +51,52 @@ void Gameplay::positionCursorAtRobot() const {
 	moveCursorToMatrixPosition(robot_x, robot_y, height, initial_console_size);
 }
 
-void Gameplay::initializeGame(unsigned int no_of_items) {
+void Gameplay::printHermesSpeech() const {
+    cout << "\x1B[38;2;0;0;155;47m" << "\n - A swift message from Hermes, messenger of the gods: \n" << "\x1B[0m";
+    cout << "\n   \"Brave traveler, I guide all who wander through unknown paths.\n";
+    cout << "    Use WASD to move your mechanical companion through this labyrinth -\n";
+    cout << "    W for north, A for west, S for south, D for east.\n";
+    cout << "    If the divine display becomes corrupted, press E to restore it.\n";
+    cout << "    Should you wish to return to the mortal realm, press Q to depart.\n\n";
+    cout << "    Move wisely, for speed and cunning shall serve you well here.\n";
+    cout << "    May the gods favor your journey!\"\n\n";
+}
 
-	cout << "\n";
-	cout << "\x1B[38;2;0;0;155;47m";
-	cout << "                                                                           \n";
-	cout << " ============= Welcome to the Labyrinth of Knossos, Theseus! ============= \n";
-	cout << "                                                                           \n";
-	cout << "\x1B[0m";
-	cout << "\n\n\n";
+void Gameplay::printHephaestusSpeech() const {
+    cout << "\x1B[38;2;0;0;155;47m" << "\n - Hephaestus, god of forge, warns: \n" << "\x1B[0m";
+    cout << "\n   \"Beware, mortal! I have scattered my crafted relics throughout this maze.\n";
+    cout << "    Each 'P' holds a mystery - you won't know what I've forged until you step upon it!\n\n";
+    cout << "    My divine creations include:\n";
+    cout << "	  * Sword - Sharp enough to cut through even a Minotaur's hide! *forge-ive me the pun*\n";
+    cout << "	  * Shield - Defense so strong, it'll make you feel *metal-ly* prepared!\n";
+    cout << "	  * Hammer - Breaks walls like my legendary smithing breaks expectations!\n";
+    cout << "	  * Fog of War - Clouds your vision... I was having a *mist-ical* day when I made this one!\n\n";
+    cout << "    Remember: Each blessing lasts but 3 moves. Use them *smith-ly*!\"\n\n\n";
+}
+
+void Gameplay::printWelcomeMessage() const {
+    cout << "\n";
+    cout << "\x1B[38;2;0;0;155;47m";
+    cout << "                                                                           \n";
+    cout << " ============= Welcome to the Labyrinth of Knossos, Theseus! ============= \n";
+    cout << "                                                                           \n";
+    cout << "\x1B[0m";
+    cout << "\n\n\n";
+}
+
+void Gameplay::printDaedalusLegend() const {
+    auto duration_microseconds = matrix_generation_time;
+    auto duration_milliseconds = duration_cast<milliseconds>(matrix_generation_time);
+
+    cout << "\x1B[38;2;0;0;155;47m" << " - Quick Trivia: " << "\x1B[0m" << " Legend says that it took Daedalus only " << duration_milliseconds.count() << " ms ("
+        << duration_microseconds.count() << " microseconds) to build the labyrinth (apparently Zeus helped him)...\n\n";
+}
+
+void Gameplay::initializeGame(unsigned int no_of_items) {
+	printWelcomeMessage();
 
 	matrix = new Matrix(width, height);
-	matrix->generateMatrix(no_of_items);
+	matrix_generation_time = matrix->generateMatrix(no_of_items);
 	
 	robot_x = matrix->getEntranceX();
 	robot_y = 1;
@@ -68,23 +105,8 @@ void Gameplay::initializeGame(unsigned int no_of_items) {
 	minotaur_x = minotaurPosition.first;
 	minotaur_y = minotaurPosition.second;
 
-	cout << "\x1B[38;2;0;0;155;47m" << "\n - A swift message from Hermes, messenger of the gods: \n" << "\x1B[0m";
-	cout << "\n   \"Brave traveler, I guide all who wander through unknown paths.\n";
-	cout << "    Use WASD to move your mechanical companion through this labyrinth -\n";
-	cout << "    W for north, A for west, S for south, D for east.\n";
-    cout << "    Should you wish to return to the mortal realm, press Q to depart.\n\n";
-	cout << "    Move wisely, for speed and cunning shall serve you well here.\n";
-	cout << "    May the gods favor your journey!\"\n\n";
-
-	cout << "\x1B[38;2;0;0;155;47m" << "\n - Hephaestus, god of forge, warns: \n" << "\x1B[0m";
-	cout << "\n   \"Beware, mortal! I have scattered my crafted relics throughout this maze.\n";
-	cout << "    Each 'P' holds a mystery - you won't know what I've forged until you step upon it!\n\n";
-	cout << "    My divine creations include:\n";
-	cout << "	  * Sword - Sharp enough to cut through even a Minotaur's hide! *forge-ive me the pun*\n";
-	cout << "	  * Shield - Defense so strong, it'll make you feel *metal-ly* prepared!\n";
-	cout << "	  * Hammer - Breaks walls like my legendary smithing breaks expectations!\n";
-	cout << "	  * Fog of War - Clouds your vision... I was having a *mist-ical* day when I made this one!\n\n";
-	cout << "    Remember: Each blessing lasts but 3 moves. Use them *smith-ly*!\"\n\n\n";
+    printHermesSpeech();
+    printHephaestusSpeech();
 
 	matrix->printMatrix(robot_x, robot_y, minotaur_x, minotaur_y);
 
@@ -462,12 +484,44 @@ void Gameplay::redrawWallsNormally(unsigned int prev_robot_x, unsigned int prev_
     positionCursorAtRobot();
 }
 
+void Gameplay::refreshDisplay() {
+
+    initial_console_size = getConsoleSize();
+
+    clearScreen();
+
+	printWelcomeMessage();
+    printDaedalusLegend();
+	printHermesSpeech();
+	printHephaestusSpeech();
+
+    // Redraw the entire game state
+    matrix->printMatrix(robot_x, robot_y, minotaur_x, minotaur_y);
+
+    // Redraw all effect hearts with current values
+    fillEffectHearts(1, sword_rounds_left);
+    fillEffectHearts(3, shield_rounds_left);
+    fillEffectHearts(5, hammer_rounds_left);
+    fillEffectHearts(7, fog_of_war_rounds_left);
+
+    // Apply current visual effects if active
+    if (fog_of_war_rounds_left > 0) {
+        drawFog();
+    }
+    if (hammer_rounds_left > 0) {
+        drawBrittleWalls();
+    }
+
+    // Position cursor at robot
+    positionCursorAtRobot();
+    cout.flush();
+}
+
 void Gameplay::startGameLoop() {
     bool gameRunning = true;
 	bool gaveUpWithQ = false;
 
-    // Hide cursor during initial setup
-    cout << "\033[?25l";
+    hideCursor();
 
     // Store previous positions to clear old characters
     unsigned int prev_robot_x = robot_x;
@@ -477,7 +531,7 @@ void Gameplay::startGameLoop() {
 
     // Position cursor at robot initially and show it
     positionCursorAtRobot();
-    cout << "\033[?25h"; // Show cursor
+	showCursor();
 
     while (gameRunning) {
 		recalculateEffects();
@@ -525,6 +579,9 @@ void Gameplay::startGameLoop() {
                 robotMoved = true;
             }
             break;
+		case 'e':
+            refreshDisplay();
+			continue; 
         case 'q': 
             gameRunning = false;
 			gaveUpWithQ = true;

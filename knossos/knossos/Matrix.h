@@ -1,6 +1,7 @@
 #pragma once
 
 #include <random>
+#include <chrono>
 #include "MatrixField.h"
 
 #define mersenne_twister mt19937
@@ -8,6 +9,7 @@
 using std::random_device;
 using std::mersenne_twister;
 using std::pair;
+using std::chrono::microseconds;
 
 class Matrix {
 private:
@@ -38,7 +40,7 @@ public:
 
 	void setField(unsigned int x, unsigned int y, FieldType fieldType);
 	
-	void generateMatrix(unsigned int no_of_items);
+	microseconds generateMatrix(unsigned int no_of_items);
 
 	void printMatrix(unsigned int robot_x, unsigned int robot_y, unsigned int minotaur_x, unsigned int minotaur_y) const;
 
