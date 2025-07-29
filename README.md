@@ -7,7 +7,9 @@ A C++ console-based interactive maze game inspired by the legendary Labyrinth of
 
 The Robot in Knossos combines strategy, randomness, and interactive gameplay through a console interface. Players must navigate a robot through a procedurally generated maze, avoiding the dangerous Minotaur while collecting and using special items that provide temporary advantages.
 
-<img width="882" height="581" alt="image" src="https://github.com/user-attachments/assets/abed0c01-1609-4d38-8287-b88cdbee1de7" />
+![Robot in Knossos Gameplay](https://github.com/user-attachments/assets/abed0c01-1609-4d38-8287-b88cdbee1de7)
+
+*Gameplay snapshot showing the robot navigating the labyrinth with sword effect (1 turn remaining)*
 
 ### Key Features
 
@@ -44,8 +46,9 @@ The project follows object-oriented design principles with clean separation of c
 | **Shield** | 🛡️ | Repels Minotaur to 2 squares distance | 3 turns |
 | **Hammer** | 🔨 | Enables passage through interior walls | 3 turns |
 
-<img width="474" height="391" alt="image" src="https://github.com/user-attachments/assets/ea23b4bd-646a-469a-9c27-adb23c437f6a" />
-**Fog of War** in action
+![Fog of War Effect](https://github.com/user-attachments/assets/ea23b4bd-646a-469a-9c27-adb23c437f6a)
+
+*The Fog of War effect in action - visibility limited to 3x3 area*
 
 ## 🚀 Getting Started
 
