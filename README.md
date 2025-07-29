@@ -163,9 +163,9 @@ This project was developed as part of an Object-Oriented Programming course at t
 ## 👨‍💻 Author
 
 **Marko Sladojević**
-- Student ID: 12345
+- Student ID: SV33-2023
 - Faculty of Technical Sciences, University of Novi Sad
-- Course: Object-Oriented Programming
+- Course: Object-Oriented Programming 2
 - Mentor: Dr. Dušan Kenjić
 
 ---
