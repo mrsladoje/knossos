@@ -132,6 +132,7 @@
     <ClCompile Include="Gameplay.cpp" />
     <ClCompile Include="knossos.cpp" />
     <ClCompile Include="Matrix.cpp" />
+    <ClCompile Include="RNGEngine.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ArgumentsHandler.h" />
@@ -139,6 +140,7 @@
     <ClInclude Include="Gameplay.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="MatrixField.h" />
+    <ClInclude Include="RNGEngine.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,5 +1,4 @@
 #include <iostream>
-#include <random>
 #include <set>
 #include <chrono>
 #include <stdexcept>
@@ -7,12 +6,8 @@
 #include "Matrix.h"
 #include "MatrixField.h"
 #include "ConsoleHandler.h"
+#include "RNGEngine.h"
 
-#define mersenne_twister mt19937
-
-using std::random_device;
-using std::mersenne_twister;
-using std::uniform_int_distribution;
 using std::vector;
 using std::set;
 using std::pair;
@@ -26,14 +21,6 @@ using std::chrono::milliseconds;
 using std::min;
 using std::random_shuffle;
 using std::out_of_range;
-
-random_device Matrix::rd;
-mersenne_twister Matrix::gen(Matrix::rd());
-
-unsigned int Matrix::getRandomNumber(unsigned int min, unsigned int max) {
-	uniform_int_distribution<unsigned int> distrib(min, max);
-	return distrib(gen);
-}
 
 Matrix::Matrix(unsigned int w, unsigned int h)
 	: width(w), height(h), fields(nullptr) {
@@ -107,8 +94,8 @@ bool Matrix::isBoundaryOrOutside(unsigned int x, unsigned int y) const {
 }
 
 pair<unsigned int, unsigned int> Matrix::setEntranceAndExit() {
-	unsigned int entrance_x = getRandomNumber(1, width - 2);
-	unsigned int exit_x = getRandomNumber(1, width - 2);
+	unsigned int entrance_x = RNGEngine::getRandomNumber(1, width - 2);
+	unsigned int exit_x = RNGEngine::getRandomNumber(1, width - 2);
 
 	delete fields[entrance_x][0];
 	fields[entrance_x][0] = new Entrance();
@@ -143,7 +130,7 @@ void Matrix::generativePrim(unsigned int entrance_x) {
 
 	while (!frontiers.empty())
 	{
-		unsigned int chosenOne = getRandomNumber(0, (unsigned int)frontiers.size() - 1);
+		unsigned int chosenOne = RNGEngine::getRandomNumber(0, (unsigned int)frontiers.size() - 1);
 		current = frontiers[chosenOne];
 		frontiers.erase(frontiers.begin() + chosenOne);
 		delete fields[current.first][current.second];
@@ -168,7 +155,7 @@ void Matrix::generativePrim(unsigned int entrance_x) {
 			}
 		}
 
-		pair<unsigned int, unsigned int> chosenPoint = potentialMazeReconnectionPoints[getRandomNumber(0, (unsigned int)potentialMazeReconnectionPoints.size() - 1)];
+		pair<unsigned int, unsigned int> chosenPoint = potentialMazeReconnectionPoints[RNGEngine::getRandomNumber(0, (unsigned int)potentialMazeReconnectionPoints.size() - 1)];
 
 		delete fields[(current.first + chosenPoint.first) / 2][(current.second + chosenPoint.second) / 2];
 		fields[(current.first + chosenPoint.first) / 2][(current.second + chosenPoint.second) / 2] = new Passage();
@@ -218,7 +205,7 @@ void Matrix::assurePathConnectivity(unsigned int exit_x) {
 		// Randomly convert some walls in the second-to-last row to passages to make it look less "wally"
 		for (unsigned int x = 1; x < width - 1; ++x) {
 			if (getFieldType(x, height - 2) == FieldType::WALL) {
-				if (getRandomNumber(1, 3) == 1) {
+				if (RNGEngine::getRandomNumber(1, 3) == 1) {
 					delete fields[x][height - 2];
 					fields[x][height - 2] = new Passage();
 				}
@@ -274,7 +261,7 @@ void Matrix::assurePathConnectivity(unsigned int exit_x) {
 }
 
 MatrixField* Matrix::createRandomItem() const {
-	unsigned int itemChoice = getRandomNumber(1, 4);
+	unsigned int itemChoice = RNGEngine::getRandomNumber(1, 4);
 
 	switch (itemChoice) {
 	case 1: return new Sword();
@@ -344,9 +331,9 @@ pair<unsigned int, unsigned int> Matrix::getRandomPassageForMinotaur(unsigned in
 		return make_pair(-1, -1);
 	}
 
-	pair<unsigned int, unsigned int> minotaur_pos = availablePositions[getRandomNumber(0, static_cast<unsigned int>(availablePositions.size()) - 1)];
+	pair<unsigned int, unsigned int> minotaur_pos = availablePositions[RNGEngine::getRandomNumber(0, static_cast<unsigned int>(availablePositions.size()) - 1)];
 	while (!minotaurPositionChessboardCheck(robot_x, minotaur_pos)) {
-		minotaur_pos = availablePositions[getRandomNumber(0, static_cast<unsigned int>(availablePositions.size()) - 1)];
+		minotaur_pos = availablePositions[RNGEngine::getRandomNumber(0, static_cast<unsigned int>(availablePositions.size()) - 1)];
 	}
 	return minotaur_pos;
 }

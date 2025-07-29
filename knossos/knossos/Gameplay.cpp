@@ -6,6 +6,7 @@
 #include "Matrix.h"
 #include "Gameplay.h"
 #include "ConsoleHandler.h"
+#include "RNGEngine.h"
 
 using std::cout;
 using std::pair;
@@ -142,7 +143,7 @@ pair<unsigned int, unsigned int> Gameplay::getMinotaurBounceCoordinates() {
 
     // If we found valid positions, bounce minotaur to one of them
     if (!validBouncePositions.empty()) {
-        int randomIndex = matrix->getRandomNumber(0, validBouncePositions.size() - static_cast<unsigned int>(1));
+        int randomIndex = RNGEngine::getRandomNumber(0, validBouncePositions.size() - static_cast<unsigned int>(1));
         pair<unsigned int, unsigned int> bouncePosition = validBouncePositions[randomIndex];
 
         return bouncePosition;
@@ -205,7 +206,7 @@ void Gameplay::moveMinotaur(unsigned int prev_minotaur_x, unsigned int prev_mino
         }
 
         if (!validDirections.empty()) {
-            int randomIndex = matrix->getRandomNumber(0, validDirections.size() - static_cast<unsigned int>(1));
+            int randomIndex = RNGEngine::getRandomNumber(0, validDirections.size() - static_cast<unsigned int>(1));
             int direction = validDirections[randomIndex];
 
             switch (direction) {
@@ -379,9 +380,9 @@ void Gameplay::drawFog() const {
             if (abs((int)i - (int)robot_y) <= 1) {
                 for (int j = 0; j < width; j++) {
                     if (abs((int)j - (int)robot_x) > 1) {
-                        int rnum = matrix->getRandomNumber(1, 15);
+                        int rnum = RNGEngine::getRandomNumber(1, 15);
                         char symbol = rnum == 1 ? '#' : ' ';
-                        rnum = matrix->getRandomNumber(1, 2);
+                        rnum = RNGEngine::getRandomNumber(1, 2);
                         if (rnum % 2 == 0) {
                             cout << "\x1B[5;34;48;5;248m" << symbol << ANSICodes::RESET;
                         }
@@ -404,9 +405,9 @@ void Gameplay::drawFog() const {
                 continue;
             }
             for (int j = 0; j < width; j++) {
-				int rnum = matrix->getRandomNumber(1, 15);
+				int rnum = RNGEngine::getRandomNumber(1, 15);
 				char symbol = rnum == 1 ? '#' : ' ';
-				rnum = matrix->getRandomNumber(1, 2);
+				rnum = RNGEngine::getRandomNumber(1, 2);
                 if (rnum % 2 == 0) {
                     cout << "\x1B[5;35;48;5;248m" << symbol << ANSICodes::RESET;
                 }
