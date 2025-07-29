@@ -2,10 +2,10 @@
 
 A C++ console-based interactive maze game inspired by the legendary Labyrinth of Knossos from Greek mythology. Guide Theseus's robot through a dynamically generated maze while avoiding the Minotaur and using special items to reach the exit.
 
+
 ## 🎮 Game Overview
 
 The Robot in Knossos combines strategy, randomness, and interactive gameplay through a console interface. Players must navigate a robot through a procedurally generated maze, avoiding the dangerous Minotaur while collecting and using special items that provide temporary advantages.
-
 
 <img width="882" height="581" alt="image" src="https://github.com/user-attachments/assets/abed0c01-1609-4d38-8287-b88cdbee1de7" />
 
@@ -13,11 +13,11 @@ The Robot in Knossos combines strategy, randomness, and interactive gameplay thr
 
 - **Dynamic Maze Generation**: Uses Randomized Prim's algorithm to create unique mazes each time
 - **Interactive Robot Control**: WASD movement controls with real-time response
-- **Intelligent Minotaur AI**: The Minotaur moves randomly but will hunt the robot when nearby
 - **Special Items System**: Four unique items with 3-turn duration effects
-- **Fog of War**: Visibility-limiting mechanic that adds strategic depth
+- **Fog of War**: Visibility-limiting item that adds strategic depth
 - **Performance Monitoring**: Built-in timing for maze generation analysis
 - **Game State Persistence**: Automatic saving of game results with timestamps
+- **No Labyrinth Reprinting⭐⭐⭐**: ANSI escape codes edit the printed labyrinth, so there is no need for reprinting the maze after each move
 
 ## 🛠️ Technical Implementation
 
@@ -55,13 +55,13 @@ The project follows object-oriented design principles with clean separation of c
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/robot-in-knossos.git
-cd robot-in-knossos
+git clone https://github.com/mrsladoje/knossos.git
+cd knossos
 ```
 
 2. Compile the project:
 ```bash
-g++ -std=c++11 -o robot_knossos src/*.cpp
+g++ -std=c++11 -o knossos src/*.cpp
 ```
 
 3. Run the game:
@@ -73,13 +73,13 @@ g++ -std=c++11 -o robot_knossos src/*.cpp
 
 ```bash
 # Minimum size maze with 5 items
-./robot_knossos 16 16 5
+./knossos 16 16 5
 
 # Medium maze with 12 items  
-./robot_knossos 30 30 12
+./knossos 30 30 12
 
 # Large maze with 25 items
-./robot_knossos 50 50 25
+./knossos 50 50 25
 ```
 
 ## 🎮 Controls
@@ -104,26 +104,6 @@ The game includes built-in performance monitoring for maze generation:
 | 50x50     | ~5.12 ms      |
 | 100x100   | ~17.75 ms     |
 
-## 🏗️ Project Structure
-
-```
-robot-in-knossos/
-├── src/
-│   ├── main.cpp
-│   ├── Matrix.cpp
-│   ├── Gameplay.cpp
-│   ├── MatrixField.cpp
-│   ├── FileHandler.cpp
-│   └── ConsoleHandler.cpp
-├── include/
-│   └── [header files]
-├── tests/
-│   └── [test files]
-├── results/
-│   └── [saved game states]
-└── README.md
-```
-
 ## 🎯 Game Objectives
 
 - **Primary Goal**: Navigate the robot from entrance to exit
@@ -133,7 +113,7 @@ robot-in-knossos/
 
 ## 🎓 Academic Context
 
-This project was developed as part of an Object-Oriented Programming course at the Faculty of Technical Sciences, University of Novi Sad. It demonstrates practical application of:
+This project was developed as part of an Object-Oriented Programming 2 course at the Faculty of Technical Sciences, University of Novi Sad. It demonstrates practical application of:
 
 - Object-oriented design patterns
 - Dynamic memory management
