@@ -33,6 +33,8 @@ private:
 	bool minotaurAlive() const;
 	void ariadneCongratulates() const;
 	pair<unsigned int, unsigned int> getMinotaurBounceCoordinates();
+	void drawBrittleWalls() const;
+	void redrawWallsNormally(unsigned int prev_robot_x, unsigned int prev_robot_y) const;
 
 public:
 	Gameplay(unsigned int width, unsigned int height)

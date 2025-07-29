@@ -120,7 +120,7 @@ pair<unsigned int, unsigned int> Gameplay::getMinotaurBounceCoordinates() {
 
     // If we found valid positions, bounce minotaur to one of them
     if (!validBouncePositions.empty()) {
-        int randomIndex = matrix->getRandomNumber(0, validBouncePositions.size() - 1);
+        int randomIndex = matrix->getRandomNumber(0, validBouncePositions.size() - static_cast<unsigned int>(1));
         pair<unsigned int, unsigned int> bouncePosition = validBouncePositions[randomIndex];
 
         return bouncePosition;
@@ -183,7 +183,7 @@ void Gameplay::moveMinotaur(unsigned int prev_minotaur_x, unsigned int prev_mino
         }
 
         if (!validDirections.empty()) {
-            int randomIndex = matrix->getRandomNumber(0, validDirections.size() - 1);
+            int randomIndex = matrix->getRandomNumber(0, validDirections.size() - static_cast<unsigned int>(1));
             int direction = validDirections[randomIndex];
 
             switch (direction) {
@@ -424,6 +424,44 @@ void Gameplay::redrawMatrixAfterFog() const {
     }
 }
 
+void Gameplay::drawBrittleWalls() const {
+    for (int dx = -1; dx <= 1; dx++) {
+        for (int dy = -1; dy <= 1; dy++) {
+            int x = robot_x + dx;
+            int y = robot_y + dy;
+
+            if (abs(dx - dy) == 1 &&
+                matrix->getFieldType(x, y) == FieldType::WALL &&
+                !matrix->isBoundaryOrOutside(x, y)) {
+
+                moveCursorToMatrixPosition(x, y, height, initial_console_size);
+                cout << "\x1B[5m#\x1B[0m";
+				cout.flush();
+            }
+        }
+    }
+    positionCursorAtRobot();
+}
+
+void Gameplay::redrawWallsNormally(unsigned int prev_robot_x, unsigned int prev_robot_y) const {
+    for (int dx = -1; dx <= 1; dx++) {
+        for (int dy = -1; dy <= 1; dy++) {
+            int x = prev_robot_x + dx;
+            int y = prev_robot_y + dy;
+
+            if (abs(dx - dy) == 1 &&
+                matrix->getFieldType(x, y) == FieldType::WALL &&
+                !matrix->isBoundaryOrOutside(x, y)) {
+
+                moveCursorToMatrixPosition(x, y, height, initial_console_size);
+                cout << "\x1B[47m#\x1B[0m";
+                cout.flush();
+            }
+        }
+    }
+    positionCursorAtRobot();
+}
+
 void Gameplay::startGameLoop() {
     bool gameRunning = true;
 	bool gaveUpWithQ = false;
@@ -446,6 +484,9 @@ void Gameplay::startGameLoop() {
 		if (fog_of_war_rounds_left > 0) {
             drawFog();
 		}
+		if (hammer_rounds_left > 0) {
+			drawBrittleWalls();
+		}
 
         // Get valid input - this will ONLY return w, a, s, d, or q
         // Invalid keys are silently ignored
@@ -461,25 +502,25 @@ void Gameplay::startGameLoop() {
 
         switch (input) {
         case 'w':
-            if (robot_y > 0 && matrix->getField(robot_x, robot_y - 1)->isWalkable()) {
+            if (robot_y > 0 && (matrix->getField(robot_x, robot_y - 1)->isWalkable() || hammer_rounds_left > 0)) {
                 new_robot_y = robot_y - 1;
                 robotMoved = true;
             }
             break;
         case 's': 
-            if (robot_y < height - 1 && matrix->getField(robot_x, robot_y + 1)->isWalkable()) {
+            if (robot_y < height - 1 && (matrix->getField(robot_x, robot_y + 1)->isWalkable() || hammer_rounds_left > 0)) {
                 new_robot_y = robot_y + 1;
                 robotMoved = true;
             }
             break;
         case 'a': 
-            if (robot_x > 0 && matrix->getField(robot_x - 1, robot_y)->isWalkable()) {
+            if (robot_x > 0 && (matrix->getField(robot_x - 1, robot_y)->isWalkable() || hammer_rounds_left > 0)) {
                 new_robot_x = robot_x - 1;
                 robotMoved = true;
             }
             break;
         case 'd': 
-            if (robot_x < width - 1 && matrix->getField(robot_x + 1, robot_y)->isWalkable()) {
+            if (robot_x < width - 1 && (matrix->getField(robot_x + 1, robot_y)->isWalkable() || hammer_rounds_left > 0)) {
                 new_robot_x = robot_x + 1;
                 robotMoved = true;
             }
@@ -510,8 +551,17 @@ void Gameplay::startGameLoop() {
                 }
 			}
 
+			// If robot stepped on a brittle wall, destroy it
+			if (hammer_rounds_left > 0 && matrix->getFieldType(robot_x, robot_y) == FieldType::WALL) {
+				matrix->setField(robot_x, robot_y, FieldType::PASSAGE);
+			}
+
             // Draw robot at new position
             updateMatrixCharacter(robot_x, robot_y, 'R');
+
+            if (hammer_rounds_left > 0) {
+                redrawWallsNormally(prev_robot_x, prev_robot_y);
+            }
 
             // Store current positions as previous for next iteration
             prev_robot_x = robot_x;

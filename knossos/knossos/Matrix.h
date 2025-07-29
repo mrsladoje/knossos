@@ -16,7 +16,6 @@ private:
 	MatrixField*** fields;
 
 	pair<unsigned int, unsigned int> setEntranceAndExit();
-	bool isBoundaryOrOutside(unsigned int x, unsigned int y) const;
 	bool minotaurPositionChessboardCheck(unsigned int robot_x, pair<unsigned int, unsigned int> minotaur_pos) const;
 	void generativePrim(unsigned int entrance_x);
 	void assurePathConnectivity(unsigned int exit_x);
@@ -30,6 +29,8 @@ public:
 	Matrix(unsigned int w, unsigned int h);
 
 	~Matrix();
+
+	bool isBoundaryOrOutside(unsigned int x, unsigned int y) const;
 
 	MatrixField* getField(unsigned int x, unsigned int y) const;
 	
