@@ -15,25 +15,25 @@ using std::chrono::duration_cast;
 
 void Gameplay::printMatrixCharacter(char symbol) const {
     if (symbol == 'R') {
-        cout << "\x1B[5;34;48;2;110;110;110m" << 'R' << "\x1B[0m";
+        cout << ANSICodes::ROBOT_STYLE << 'R' << ANSICodes::RESET;
     }
     else if (symbol == 'M') {
-        cout << "\x1B[5;38;2;150;75;0;48;2;110;110;110m" << 'M' << "\x1B[0m";
+        cout << ANSICodes::MINOTAUR_STYLE << 'M' << ANSICodes::RESET;
     }
     else if (symbol == 'P') {
-        cout << "\x1B[31m" << 'P' << "\x1B[0m";
+        cout << ANSICodes::ITEM_STYLE << 'P' << ANSICodes::RESET;
     }
     else if (symbol == 'E') {
-        cout << "\x1B[5;32m" << 'E' << "\x1B[0m";
+        cout << ANSICodes::EXIT_STYLE << 'E' << ANSICodes::RESET;
     }
     else if (symbol == '#') {
-        cout << "\x1B[47m" << '#' << "\x1B[0m";
+        cout << ANSICodes::WALL_STYLE << '#' << ANSICodes::RESET;
     }
     else if (symbol == 'U') {
-		cout << "\x1B[33m" << 'U' << "\x1B[0m";
+		cout << ANSICodes::ENTRANCE_STYLE << 'U' << ANSICodes::RESET;
 	}
 	else if (symbol == 'I') {
-		cout << "\x1B[32m" << 'I' << "\x1B[0m";
+		cout << ANSICodes::EXIT_STYLE << 'I' << ANSICodes::RESET;
 	}
     else {
         cout << symbol;
@@ -52,7 +52,7 @@ void Gameplay::positionCursorAtRobot() const {
 }
 
 void Gameplay::printHermesSpeech() const {
-    cout << "\x1B[38;2;0;0;155;47m" << "\n - A swift message from Hermes, messenger of the gods: \n" << "\x1B[0m";
+    cout << "\x1B[38;2;0;0;155;47m" << "\n - A swift message from Hermes, messenger of the gods: \n" << ANSICodes::RESET;
     cout << "\n   \"Brave traveler, I guide all who wander through unknown paths.\n";
     cout << "    Use WASD to move your mechanical companion through this labyrinth -\n";
     cout << "    W for north, A for west, S for south, D for east.\n";
@@ -63,7 +63,7 @@ void Gameplay::printHermesSpeech() const {
 }
 
 void Gameplay::printHephaestusSpeech() const {
-    cout << "\x1B[38;2;0;0;155;47m" << "\n - Hephaestus, god of forge, warns: \n" << "\x1B[0m";
+    cout << "\x1B[38;2;0;0;155;47m" << "\n - Hephaestus, god of forge, warns: \n" << ANSICodes::RESET;
     cout << "\n   \"Beware, mortal! I have scattered my crafted relics throughout this maze.\n";
     cout << "    Each 'P' holds a mystery - you won't know what I've forged until you step upon it!\n\n";
     cout << "    My divine creations include:\n";
@@ -80,7 +80,7 @@ void Gameplay::printWelcomeMessage() const {
     cout << "                                                                           \n";
     cout << " ============= Welcome to the Labyrinth of Knossos, Theseus! ============= \n";
     cout << "                                                                           \n";
-    cout << "\x1B[0m";
+    cout << ANSICodes::RESET;
     cout << "\n\n\n";
 }
 
@@ -88,7 +88,7 @@ void Gameplay::printDaedalusLegend() const {
     auto duration_microseconds = matrix_generation_time;
     auto duration_milliseconds = duration_cast<milliseconds>(matrix_generation_time);
 
-    cout << "\x1B[38;2;0;0;155;47m" << " - Quick Trivia: " << "\x1B[0m" << " Legend says that it took Daedalus only " << duration_milliseconds.count() << " ms ("
+    cout << "\x1B[38;2;0;0;155;47m" << " - Quick Trivia: " << ANSICodes::RESET << " Legend says that it took Daedalus only " << duration_milliseconds.count() << " ms ("
         << duration_microseconds.count() << " microseconds) to build the labyrinth (apparently Zeus helped him)...\n\n";
 }
 
@@ -252,21 +252,21 @@ bool Gameplay::checkGameEndConditions() {
     // Check if robot reached exit
     if (matrix->getFieldType(robot_x, robot_y) == FieldType::EXIT) {
         moveCursorToMatrixPosition(-3, robot_y + static_cast<unsigned int>(4), height, initial_console_size);
-        cout << "\x1B[38;2;255;215;0;46m" << "\n - Zeus, King of Olympus, thunders from above: \n" << "\x1B[0m";
+        cout << "\x1B[38;2;255;215;0;46m" << "\n - Zeus, King of Olympus, thunders from above: \n" << ANSICodes::RESET;
         cout << "\n\n   \"MAGNIFICENT, MORTAL! Your courage rivals that of the greatest heroes!\n";
         cout << "    By my lightning bolt, you have conquered the labyrinth that has claimed countless souls!\n\n";
         cout << "    The very stones of Knossos tremble before your triumph!\n";
         cout << "    Even your Father, Poseidon, bows to your superior wit and valor!\n\n";
         cout << "    Let it be known across all realms - from the depths of Hades to the heights of Olympus -\n";
         cout << "    that THIS day, a true champion walked among us!\n\n";
-        cout << "\x1B[38;2;255;215;0;46m" << "    ==== THE HEAVENS REJOICE! ====    \n" << "\x1B[0m\n\n\n";
+        cout << "\x1B[38;2;255;215;0;46m" << "    ==== THE HEAVENS REJOICE! ====    \n" << ANSICodes::RESET << "\n\n\n";
         return true;
     }
 
     // Check if minotaur caught robot
     if (robot_x == minotaur_x && robot_y == minotaur_y) {
         moveCursorToMatrixPosition(-3, height + static_cast<unsigned int>(2), height, initial_console_size);
-        cout << "\x1B[38;2;0;151;255;47m" << "\n - Poseidon, Lord of the Seas, emerges from the depths: \n" << "\x1B[0m";
+        cout << "\x1B[38;2;0;151;255;47m" << "\n - Poseidon, Lord of the Seas, emerges from the depths: \n" << ANSICodes::RESET;
         cout << "\n\n   \"My son... my brave Theseus...\n";
         cout << "    I have watched your journey through these cursed halls with great pride.\n\n";
         cout << "    Though your mechanical companion has fallen, your courage burns brighter\n";
@@ -285,10 +285,10 @@ void Gameplay::fillEffectHearts(unsigned int y, unsigned int no_of_hearts) {
 
     for (unsigned int i = 0; i < 3; ++i) {
         if (i < no_of_hearts) {
-            cout << "\x1B[41;36m" << "0" << "\x1B[0m"; 
+            cout << "\x1B[41;36m" << "0" << ANSICodes::RESET;
         }
         else {
-            cout << "\x1B[31m" << "0" << "\x1B[0m"; 
+            cout << "\x1B[31m" << "0" << ANSICodes::RESET;
         }
         if (i < 2) {
             cout << " ";
@@ -298,8 +298,8 @@ void Gameplay::fillEffectHearts(unsigned int y, unsigned int no_of_hearts) {
     cout.flush();
 
     moveCursorToMatrixPosition(3 + width + 3, y, height, initial_console_size);
-    if (no_of_hearts > 0) cout << "\x1B[5;36m" << "o" << "\x1B[0m";
-	else cout << "\x1B[0m" << "o" << "\x1B[0m";
+    if (no_of_hearts > 0) cout << "\x1B[5;36m" << "o" << ANSICodes::RESET;
+	else cout << ANSICodes::RESET << "o" << ANSICodes::RESET;
 	cout.flush();
 }
 
@@ -349,7 +349,7 @@ void Gameplay::activateEffect(ItemType itemType) {
 
 void Gameplay::ariadneCongratulates() const {
     moveCursorToMatrixPosition(3 + width + 32, 0, height, initial_console_size);
-    cout << "\x1B[35;47m" << " - Ariadne, Princess of Crete, emerges from the shadows: " << "\x1B[0m";
+    cout << "\x1B[35;47m" << " - Ariadne, Princess of Crete, emerges from the shadows: " << ANSICodes::RESET;
     moveCursorToMatrixPosition(3 + width + 32, 2, height, initial_console_size);
     cout << "  \"Theseus! My heart soars like a dove freed from its cage!\n";
     moveCursorToMatrixPosition(3 + width + 32, 3, height, initial_console_size);
@@ -368,7 +368,7 @@ void Gameplay::ariadneCongratulates() const {
     cout << "   the love of one who has waited long for a true hero!\"\n\n";
 
     moveCursorToMatrixPosition(3 + width + 32, 11, height, initial_console_size);
-    cout << "\x1B[38;2;255;215;0m" << " -----<3----<3----<3----<3----<3----<3----<3----<3\n" << "\x1B[0m";
+    cout << "\x1B[38;2;255;215;0m" << " -----<3----<3----<3----<3----<3----<3----<3----<3\n" << ANSICodes::RESET;
     positionCursorAtRobot();
 }
 
@@ -383,10 +383,10 @@ void Gameplay::drawFog() const {
                         char symbol = rnum == 1 ? '#' : ' ';
                         rnum = matrix->getRandomNumber(1, 2);
                         if (rnum % 2 == 0) {
-                            cout << "\x1B[5;34;48;5;248m" << symbol << "\x1B[0m";
+                            cout << "\x1B[5;34;48;5;248m" << symbol << ANSICodes::RESET;
                         }
                         else {
-                            cout << "\x1B[5;35;48;5;248m" << symbol << "\x1B[0m";
+                            cout << "\x1B[5;35;48;5;248m" << symbol << ANSICodes::RESET;
                         }
                     }
 					else {
@@ -408,10 +408,10 @@ void Gameplay::drawFog() const {
 				char symbol = rnum == 1 ? '#' : ' ';
 				rnum = matrix->getRandomNumber(1, 2);
                 if (rnum % 2 == 0) {
-                    cout << "\x1B[5;35;48;5;248m" << symbol << "\x1B[0m";
+                    cout << "\x1B[5;35;48;5;248m" << symbol << ANSICodes::RESET;
                 }
                 else {
-                    cout << "\x1B[5;34;48;5;248m" << symbol << "\x1B[0m";
+                    cout << "\x1B[5;34;48;5;248m" << symbol << ANSICodes::RESET;
                 }
             }
             cout << "\n  ";
@@ -457,7 +457,7 @@ void Gameplay::drawBrittleWalls() const {
                 !matrix->isBoundaryOrOutside(x, y)) {
 
                 moveCursorToMatrixPosition(x, y, height, initial_console_size);
-                cout << "\x1B[5m#\x1B[0m";
+                cout << "\x1B[5m#" << ANSICodes::RESET;
 				cout.flush();
             }
         }
@@ -476,7 +476,7 @@ void Gameplay::redrawWallsNormally(unsigned int prev_robot_x, unsigned int prev_
                 !matrix->isBoundaryOrOutside(x, y)) {
 
                 moveCursorToMatrixPosition(x, y, height, initial_console_size);
-                cout << "\x1B[47m#\x1B[0m";
+                cout << ANSICodes::WALL_STYLE << '#' << ANSICodes::RESET;
                 cout.flush();
             }
         }
@@ -645,7 +645,7 @@ void Gameplay::startGameLoop() {
 
 	if (gaveUpWithQ) {
 		moveCursorToMatrixPosition(-3, height + static_cast<unsigned int>(2), height, initial_console_size);
-        cout << "\x1B[35;47m" << "\n - Athena, Goddess of Wisdom and Strategy, appears: \n" << "\x1B[0m";
+        cout << "\x1B[35;47m" << "\n - Athena, Goddess of Wisdom and Strategy, appears: \n" << ANSICodes::RESET;
         cout << "\n\n   \"Hold, brave Theseus! Do not let frustration cloud your judgment!\n";
         cout << "    Even the wisest warriors must sometimes retreat to fight another day.\n\n";
         cout << "    This labyrinth requires more than courage - it demands cunning and strategy.\n";

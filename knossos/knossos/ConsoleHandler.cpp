@@ -15,9 +15,18 @@ using std::pair;
 using std::make_pair;
 using std::cout;
 
+namespace ANSICodes {
+    extern const char* ROBOT_STYLE = "\x1B[5;34;48;2;110;110;110m";
+    extern const char* MINOTAUR_STYLE = "\x1B[5;38;2;150;75;0;48;2;110;110;110m";
+    extern const char* WALL_STYLE = "\x1B[47m";
+    extern const char* ENTRANCE_STYLE = "\x1B[33m";
+    extern const char* EXIT_STYLE = "\x1B[32m";
+    extern const char* ITEM_STYLE = "\x1B[31m";
+    extern const char* RESET = "\x1B[0m";
+}
+
 #ifdef _WIN32
 #include <windows.h>
-
 pair<int, int> getConsoleSize() {
     CONSOLE_SCREEN_BUFFER_INFO csbi;
     GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);

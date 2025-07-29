@@ -6,6 +6,7 @@
 
 #include "Matrix.h"
 #include "MatrixField.h"
+#include "ConsoleHandler.h"
 
 #define mersenne_twister mt19937
 
@@ -366,7 +367,7 @@ microseconds Matrix::generateMatrix(unsigned int no_of_items) {
 	auto duration_microseconds = duration_cast<microseconds>(end_time - start_time);
 	auto duration_milliseconds = duration_cast<milliseconds>(end_time - start_time);
 
-	cout << "\x1B[38;2;0;0;155;47m" << " - Quick Trivia: " << "\x1B[0m" << " Legend says that it took Daedalus only " << duration_milliseconds.count() << " ms ("
+	cout << "\x1B[38;2;0;0;155;47m" << " - Quick Trivia: " << ANSICodes::RESET << " Legend says that it took Daedalus only " << duration_milliseconds.count() << " ms ("
 		<< duration_microseconds.count() << " microseconds) to build the labyrinth (apparently Zeus helped him)...\n\n";
 
 	return duration_microseconds;
@@ -377,33 +378,33 @@ void Matrix::printMatrix(unsigned int robot_x, unsigned int robot_y, unsigned in
 		cout << "  ";
 		for (unsigned int j = 0; j < width; ++j) {
 			if (robot_x == j && robot_y == i)
-				cout << "\x1B[5;34;48;2;110;110;110m" << 'R' << "\x1B[0m";
+				cout << ANSICodes::ROBOT_STYLE << 'R' << ANSICodes::RESET;
 			else if (minotaur_x == j && minotaur_y == i)
-				cout << "\x1B[5;38;2;150;75;0;48;2;77;77;77m" << 'M' << "\x1B[0m";
+				cout << ANSICodes::MINOTAUR_STYLE << 'M' << ANSICodes::RESET;
 			else {
 				if (fields[j][i]->getFieldType() == FieldType::WALL)
-					cout << "\x1B[47m" << fields[j][i]->getSymbol() << "\x1B[0m";
+					cout << ANSICodes::WALL_STYLE << fields[j][i]->getSymbol() << ANSICodes::RESET;
 				else if (fields[j][i]->getFieldType() == FieldType::ITEM)
-					cout << "\x1B[31m" << fields[j][i]->getSymbol() << "\x1B[0m";
+					cout << ANSICodes::ITEM_STYLE << fields[j][i]->getSymbol() << ANSICodes::RESET;
 				else if (fields[j][i]->getFieldType() == FieldType::ENTRANCE)
-					cout << "\x1B[33m" << fields[j][i]->getSymbol() << "\x1B[0m";
+					cout << ANSICodes::ENTRANCE_STYLE << fields[j][i]->getSymbol() << ANSICodes::RESET;
 				else if (fields[j][i]->getFieldType() == FieldType::EXIT)
-					cout << "\x1B[32m" << fields[j][i]->getSymbol() << "\x1B[0m";
+					cout << ANSICodes::EXIT_STYLE << fields[j][i]->getSymbol() << ANSICodes::RESET;
 				else cout << fields[j][i]->getSymbol();
 			}
 		}
 
 		if (i == 1) { 
-			cout << "      o Sword: \x1B[31m        0 0 0\x1B[0m";
+			cout << "      o Sword: \x1B[31m        0 0 0" << ANSICodes::RESET;
 		}
 		else if (i == 3) {
-			cout << "      o Shield: \x1B[31m       0 0 0\x1B[0m";
+			cout << "      o Shield: \x1B[31m       0 0 0" << ANSICodes::RESET;
 		}
 		else if (i == 5) {
-			cout << "      o Hammer: \x1B[31m       0 0 0\x1B[0m";
+			cout << "      o Hammer: \x1B[31m       0 0 0" << ANSICodes::RESET;
 		} 
 		else if (i == 7) { 
-			cout << "      o Fog of War: \x1B[31m   0 0 0\x1B[0m";
+			cout << "      o Fog of War: \x1B[31m   0 0 0" << ANSICodes::RESET;
 		}
 
 		cout << "\n";
