@@ -31,8 +31,6 @@ The project follows object-oriented design principles with clean separation of c
 ### Algorithms Used
 
 - **Randomized Prim's Algorithm**: For maze generation ensuring connectivity
-- **Path Assurance**: Guarantees solvable mazes by verifying robot-to-exit paths
-- **AI Pathfinding**: Minotaur behavior switching between random and hunting modes
 
 ## 🎯 Special Items
 
@@ -90,6 +88,7 @@ g++ -std=c++11 -o robot_knossos src/*.cpp
 | `S` | Move Down |
 | `D` | Move Right |
 | `Q` | Quit Game |
+| `E` | Fix Corrupted Console |
 
 ## 📊 Performance Benchmarks
 
