@@ -6,6 +6,9 @@ A C++ console-based interactive maze game inspired by the legendary Labyrinth of
 
 The Robot in Knossos combines strategy, randomness, and interactive gameplay through a console interface. Players must navigate a robot through a procedurally generated maze, avoiding the dangerous Minotaur while collecting and using special items that provide temporary advantages.
 
+
+<img width="882" height="581" alt="image" src="https://github.com/user-attachments/assets/abed0c01-1609-4d38-8287-b88cdbee1de7" />
+
 ### Key Features
 
 - **Dynamic Maze Generation**: Uses Randomized Prim's algorithm to create unique mazes each time
